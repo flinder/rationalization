@@ -94,15 +94,14 @@ df$d = as.factor(rep(d,each=5))
 df$N = as.factor(rep(c(1:5),4))
 colnames(df) = c('lo','hi','d','N')
 
-p = ggplot(df,aes(,hi))
+p = ggplot(df,aes(lo,hi))
 p = p + facet_wrap(~ d, ncol = 2, scales = "fixed")
 p = p + geom_errorbar(aes(x=N,ymin=lo,ymax=hi),width=.2)
 p = p + geom_hline(yintercept=1)
 p = p + coord_flip()
-
-p = p + scale_x_discrete(breaks=c(1:5), labels=as
-p = p + ylab('Ratio of Mean Absolute Difference') + ylab('Ratio of Mean Absolute Difference')
-
+p = p + scale_x_discrete(breaks=c(1:5), labels=as.character(N))
+p = p + ylab('Ratio of Mean Absolute Difference') + xlab('N')
+ggsave("figures/power_sim.png", plot = p, width = 8, height = 8)
 
 
 
