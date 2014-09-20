@@ -85,5 +85,23 @@ for(i in 1:length(d)){
   ci = do.call(rbind,lapply(distns,quantile,c(0.025,0.975)))
   cis[[i]] = ci
 }
+#save(file='data/ci.RData','cis')
+load(file='data/ci.RData')
 
-save(file='data/ci.RData','cis')
+# Plot it
+cis = as.data.frame(do.call(rbind,cis))
+cis$d = c(rep(d,each=5))
+cis$N = c(rep(c(1:5),4))
+colnames(cis) = c('lo','hi','d','N')
+
+p = ggplot(cis,aes(,hi))
+p = p + facet_wrap(~ d, ncol = 2, scales = "fixed")
+p = p + geom_errorbar(aes(x=N,ymin=lo,ymax=hi),width=.2)
+p = p + geom_hline(yintercept=1)
+p = p + coord_flip()
+p = p + scale_x_discrete(breaks=c(1:5), labels=as.character(N))
+p
+
+
+
+
