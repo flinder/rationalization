@@ -8,7 +8,7 @@ library(truncnorm)
 
 # Getting realisitc estimates for pars of distribution of self position
 setwd("C:/Users/samsung/Dropbox/rationalization/rationalization")
-anes = read.table('data/anes.csv')
+anes = read.table('data/anes/anes.csv')
 
 as = anes$libcpre_self
 as_norm = (as - min(as))/(max(as)-min(as))

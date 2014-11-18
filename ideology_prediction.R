@@ -2,9 +2,10 @@
 rm(list=ls())
 library(ggplot2)
 library(randomForestSRC)
+library(party)
 
-setwd("C:/Users/samsung/Dropbox/rationalization/rationalization")
-df = read.table('data/anes.csv')
+setwd("C:/Users/flinder/Dropbox/rationalization/rationalization")
+df = read.table('data/anes/anes.csv')
 
 #=================
 # Predictive model
@@ -12,6 +13,7 @@ df = read.table('data/anes.csv')
 
 mod = formula(paste0('libcpre_self~',paste(names(df)[!names(df)=='libcpre_self'],collapse='+')))
 grow = rfsrc(mod,data=df,importance='permute',na.action='na.impute')
+grow2 = cforest(mod,data=df)
 
 #save(grow,file='grow_pred.RData')
 #load('grow_pred.RData')

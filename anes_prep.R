@@ -9,7 +9,7 @@ library(foreign)
 #=================
 
 setwd("C:/Users/samsung/Dropbox/rationalization/rationalization/")
-anes = read.dta('data/anes_timeseries_2012_stata12.dta')
+anes = read.dta('data/anes/anes_timeseries_2012_stata12.dta')
 
 incl = c('aa_uni_x','aa_work_x','abort_bd_x','abort_choice_x','abort_fatal_x'
          ,'abort_fin_x','abort_health_x','abort_incest_x','abort_rape_x'
@@ -78,4 +78,4 @@ for(i in 1:ncol(df)){
 # Drop vars with missingness on dependent var
 df = df[-which(is.na(df$libcpre_self)),]
 
-write.table(df,'data/anes.csv')
+write.table(df,'data/anes/anes.csv')
