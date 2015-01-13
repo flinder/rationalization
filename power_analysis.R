@@ -2,19 +2,19 @@
 # of party choice through missreporting of ideological positions
 # Author: Fridolin Linder
 
-rm(list=ls())
+rm(list = ls())
 library(ggplot2)
 library(truncnorm)
 
 # Getting realisitc estimates for pars of distribution of self position
-setwd("C:/Users/samsung/Dropbox/rationalization/rationalization")
-anes = read.table('data/anes/anes.csv')
+setwd("C:/Users/flinder/Dropbox/rationalization/rationalization")
+anes <- read.table('data/anes/anes.csv')
 
-as = anes$libcpre_self
-as_norm = (as - min(as))/(max(as)-min(as))
-plot(density(as_norm,bw=0.12,from=0,to=1),lwd=2)
-x = seq(0,1,by=0.01)
-points(x,dtruncnorm(x,0,1,0.5,0.3),type='l',lty=2,lwd=2,col='red')
+as <- anes$libcpre_self
+as_norm <- (as - min(as))/(max(as)-min(as))
+plot(density(as_norm,bw = 0.12,from = 0,to = 1),lwd = 2)
+x <- seq(0,1,by = 0.01)
+points(x,dtruncnorm(x,0,1,0.5,0.3),type = 'l',lty = 2,lwd = 2,col = 'red')
 
 
 ### Function simulating the data generating process for simple case:
@@ -39,68 +39,68 @@ points(x,dtruncnorm(x,0,1,0.5,0.3),type='l',lty=2,lwd=2,col='red')
 #
 # 
 
-genData = function(N,md=0.5,p1=0.2,p2=0.8,v=0.1){
+genData <- function(N,md = 0.5,p1 = 0.2,p2 = 0.8,v = 0.1){
   require(truncnorm)
-  ts = rtruncnorm(N,0,1,0.5,0.2) # true self position
-  pp = cbind(rtruncnorm(N,0,1,p1,v),rtruncnorm(N,0,1,p2,v)) # perc part pos
-  dtf = apply(pp-ts,1,function(x) x[which.min(abs(x))]) # distance to favorite
-  fp = apply(abs(pp-ts),1,which.min) # favorite party
-  d = c(rnorm(N/2,md,0.05),rep(0,N/2)) # Bias par 0 for control group
-  rs = ts + d*dtf # reported self = true self + bias
-  rp = apply(cbind(pp,fp),1,function(x) x[x[3]])
-  data.frame('rep_self'=rs,'rep_party'=rp,'fav_party'=fp
-             ,'group'=c(rep(1,N/2),rep(0,N/2)))
+  ts <- rtruncnorm(N,0,1,0.5,0.2) # true self position
+  pp <- cbind(rtruncnorm(N,0,1,p1,v),rtruncnorm(N,0,1,p2,v)) # perc part pos
+  dtf <- apply(pp-ts,1,function(x) x[which.min(abs(x))]) # distance to favorite
+  fp <- apply(abs(pp-ts),1,which.min) # favorite party
+  d <- c(rnorm(N/2,md,0.05),rep(0,N/2)) # Bias par 0 for control group
+  rs <- ts + d*dtf # reported self  =  true self + bias
+  rp <- apply(cbind(pp,fp),1,function(x) x[x[3]])
+  data.frame('rep_self' = rs,'rep_party' = rp,'fav_party' = fp
+             ,'group' = c(rep(1,N/2),rep(0,N/2)))
 }
 
 # Demo
-N = 1e4
-X = genData(N)
-dist = abs(X$rep_self-X$rep_party)
-hist(dist[X$group==0],breaks=30,col='grey')
-hist(dist[X$group==1],breaks=30,col='grey')
-mean(dist[X$group==1])/mean(dist[X$group==0])
+N <- 1e4
+X <- genData(N)
+dist <- abs(X$rep_self-X$rep_party)
+hist(dist[X$group == 0], breaks = 30,col = 'grey')
+hist(dist[X$group == 1], breaks = 30,col = 'grey')
+mean(dist[X$group == 1]) / mean(dist[X$group == 0])
 
 # Function to generate data and calcualte difference in mean abs distance
-diff = function(md,N,ratio=T){
-  X = genData(N,md=md)
-  dist = abs(X$rep_self-X$rep_party)
-  if(!ratio) mean(dist[X$group==0]) - mean(dist[X$group==1])
-    else mean(dist[X$group==1])/mean(dist[X$group==0])
+diff <- function(md, N, ratio = T){
+  X <- genData(N, md = md)
+  dist <- abs(X$rep_self-X$rep_party)
+  if(!ratio) mean(dist[X$group == 0]) - mean(dist[X$group == 1])
+    else mean(dist[X$group == 1]) / mean(dist[X$group == 0])
 }
 
 # Function to Sample difference/ratio of means
-sampDiff = function(B,N,md) sapply(rep(md,B),diff,N=N)
+sampDiff <- function(B, N, md) sapply(rep(md, B), diff, N = N)
 
 
 ### Power analysis by simulation
-cis = list()
-d = c(0.05,0.1,0.2,0.5)
-N = list(10,100,200,500,1000)
-B = 1000
+cis <- list()
+d <- c(0.05,0.1,0.2,0.5)
+N <- list(10,100,200,500,1000)
+B <- 1000
 
 for(i in 1:length(d)){
   print(d[i])
-  md = d[i] # Reduction of distance by 100*d[i]%
-  distns = lapply(N,sampDiff,B=B,md=md)
-  ci = do.call(rbind,lapply(distns,quantile,c(0.025,0.975)))
-  cis[[i]] = ci
+  md <- d[i] # Reduction of distance by 100*d[i]%
+  distns <- lapply(N,sampDiff,B = B,md = md)
+  ci <- do.call(rbind,lapply(distns,quantile,c(0.025,0.975)))
+  cis[[i]] <- ci
 }
 #save(file='data/ci.RData','cis')
-load(file='data/ci.RData')
+load(file = 'data/ci.RData')
 
 # Plot it
-df = as.data.frame(do.call(rbind,cis))
-df$d = as.factor(rep(d,each=5))
-df$N = as.factor(rep(c(1:5),4))
-colnames(df) = c('lo','hi','d','N')
+df <- as.data.frame(do.call(rbind,cis))
+df$d <- as.factor(rep(d,each = 5))
+df$N <- as.factor(rep(c(1:5),4))
+colnames(df) <- c('lo','hi','d','N')
 
-p = ggplot(df,aes(lo,hi))
-p = p + facet_wrap(~ d, ncol = 2, scales = "fixed")
-p = p + geom_errorbar(aes(x=N,ymin=lo,ymax=hi),width=.2)
-p = p + geom_hline(yintercept=1)
-p = p + coord_flip()
-p = p + scale_x_discrete(breaks=c(1:5), labels=as.character(N))
-p = p + ylab('Ratio of Mean Absolute Difference') + xlab('N')
+p <- ggplot(df,aes(lo,hi))
+p <- p + facet_wrap(~ d, ncol = 2, scales = "fixed")
+p <- p + geom_errorbar(aes(x = N,ymin = lo,ymax = hi),width = .2)
+p <- p + geom_hline(yintercept = 1)
+p <- p + coord_flip()
+p <- p + scale_x_discrete(breaks = c(1:5), labels = as.character(N))
+p <- p + ylab('Ratio of Mean Absolute Difference') + xlab('N')
 ggsave("figures/power_sim.png", plot = p, width = 8, height = 8)
 
 
