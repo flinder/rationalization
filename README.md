@@ -14,3 +14,4 @@ Files:
 
 - power_analysis.R: Simulation of hypothesized DGP and power analysis to determine sample size
 
+- mturk_prep.R: data preparation from raw qualtrix output plus checking of validation codes
