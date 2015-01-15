@@ -68,9 +68,8 @@ points(x, dtruncnorm(x, 0, 1, 0.5, 0.3), type = 'l', lty = 2, lwd = 2,
 # Simulating data according to hypothesized DGP 
 
 
-### Function simulating the data generating process for simple case:
-### Only self position is biased and party position is assumed to be 
-### unbiased (see proposal manuscript for definition of unbiasedness)
+### Function simulating the data generating process for experiment 2. 
+### Assuming the true self position is known in both groups
 #
 ## Arguments:
 # N: number of samples
@@ -83,37 +82,38 @@ points(x, dtruncnorm(x, 0, 1, 0.5, 0.3), type = 'l', lty = 2, lwd = 2,
 # Their perception of the two parties' positions is drawn from N(p1,v),N(p2,v)
 # Their prefered party is selected by minimizing the distance between self and 
 # perceived party position
-# Subjects in the treatment condition report biased selfpositions where the individual
-# bias is calculated by drawing a bias parameter d from truncN(md,.05,0,1), then
-# rs_i = ts_i + d_i*(pp_i-ts_i), where, rs: reported self, ts: true self, 
+# Subjects in the treatment condition report biased candidate postieions where 
+# the individual bias is calculated by drawing a bias parameter d from 
+# truncN(md,.05,0,1), then rp_i = pp_i + d_i*(pp_i-ts_i), where, 
+# rs: reported party position, ts: true self, 
 # pp: perceived party and i = 1,...,N are the subjects
 #
 
-genData <- function(N,md = 0.5,p1 = 0.2,p2 = 0.8,v = 0.1){
+genData <- function(N, md = .5, p1 = .2, p2 = .8, v = .1){
   require(truncnorm)
-  ts <- rtruncnorm(N,0,1,0.5,0.2) # true self position
-  pp <- cbind(rtruncnorm(N,0,1,p1,v),rtruncnorm(N,0,1,p2,v)) # perc part pos
-  dtf <- apply(pp-ts,1,function(x) x[which.min(abs(x))]) # distance to favorite
-  fp <- apply(abs(pp-ts),1,which.min) # favorite party
-  d <- c(rnorm(N/2,md,0.05),rep(0,N/2)) # Bias par 0 for control group
-  rs <- ts + d*dtf # reported self  =  true self + bias
-  rp <- apply(cbind(pp,fp),1,function(x) x[x[3]])
-  data.frame('rep_self' = rs,'rep_party' = rp,'fav_party' = fp
-             ,'group' = c(rep(1,N/2),rep(0,N/2)))
+  ts <- rtruncnorm(N, 0, 1, .5, .2) # true self position
+  pp <- cbind(rtruncnorm(N, 0, 1, p1, v), rtruncnorm(N, 0, 1, p2, v)) # perc part pos
+  dtf <- apply(ts - pp, 1, function(x) x[which.min(abs(x))]) # distance to favorite
+  fp <- apply(abs(pp - ts), 1, which.min) # favorite party
+  d <- c(rnorm(N / 2, md, .1), rep(0, N / 2)) # Bias par 0 for control group
+  tpp <- apply(cbind(pp, fp), 1, function(x) x[x[3]]) # true perceived pos of prefered party
+  rp <- tpp + d * dtf # reported party  =  perceived party + bias
+  data.frame('rep_self' = ts,'rep_party' = rp, "true_party" = tpp, 'fav_party' = fp,
+             'group' = c(rep(1,N/2),rep(0,N/2)), "d" = d)
 }
 
 # Demo
 N <- 1e4
 X <- genData(N)
-dist <- abs(X$rep_self-X$rep_party)
-hist(dist[X$group == 0], breaks = 30,col = 'grey')
-hist(dist[X$group == 1], breaks = 30,col = 'grey')
+dist <- abs(X$rep_self - X$rep_party)
+hist(dist[X$group == 0], breaks = 30,col = 'grey') # Control Group
+hist(dist[X$group == 1], breaks = 30,col = 'grey') # Treatment Group
 mean(dist[X$group == 1]) / mean(dist[X$group == 0])
 
 # Function to generate data and calcualte difference in mean abs distance
 diff <- function(md, N, ratio = T){
   X <- genData(N, md = md)
-  dist <- abs(X$rep_self-X$rep_party)
+  dist <- abs(X$rep_self - X$rep_party)
   if(!ratio) mean(dist[X$group == 0]) - mean(dist[X$group == 1])
     else mean(dist[X$group == 1]) / mean(dist[X$group == 0])
 }
@@ -123,25 +123,26 @@ sampDiff <- function(B, N, md) sapply(rep(md, B), diff, N = N)
 
 ### Power analysis by simulation
 cis <- list()
-d <- c(0.05,0.1,0.2,0.5)
-N <- list(10,100,200,500,1000)
+d <- c(.05, .1, .2, .5)
+N <- list(10, 100, 200, 500, 1000)
 B <- 1000
 
 for(i in 1:length(d)){
   print(d[i])
   md <- d[i] # Reduction of distance by 100*d[i]%
-  distns <- lapply(N,sampDiff,B = B,md = md)
-  ci <- do.call(rbind,lapply(distns,quantile,c(0.025,0.975)))
+  distns <- lapply(N, sampDiff, B = B,md = md)
+  ci <- do.call(rbind, lapply(distns, quantile, c(.025, .975)))
   cis[[i]] <- ci
 }
 #save(file='data/ci.RData','cis')
-load(file = 'data/ci.RData')
+#load(file = "data/ci.RData")
 
 # Plot it
-df <- as.data.frame(do.call(rbind,cis))
-df$d <- as.factor(rep(d,each = 5))
-df$N <- as.factor(rep(c(1:5),4))
-colnames(df) <- c('lo','hi','d','N')
+df <- as.data.frame(do.call(rbind, cis))
+df$d <- as.factor(rep(d, each = 5))
+levels(df$d) <- c()
+df$N <- as.factor(rep(c(1:5), 4))
+colnames(df) <- c("lo", "hi", "d", "N")
 
 p <- ggplot(df,aes(lo,hi))
 p <- p + facet_wrap(~ d, ncol = 2, scales = "fixed")
@@ -149,7 +150,8 @@ p <- p + geom_errorbar(aes(x = N,ymin = lo,ymax = hi),width = .2)
 p <- p + geom_hline(yintercept = 1)
 p <- p + coord_flip()
 p <- p + scale_x_discrete(breaks = c(1:5), labels = as.character(N))
-p <- p + ylab('Ratio of Mean Absolute Difference') + xlab('N')
+p <- p + ylab('Ratio of Mean Absolute Difference between S^ and C^') + xlab('N')
+p <- p + theme_bw()
 ggsave("figures/power_sim.png", plot = p, width = 8, height = 8)
 
 
