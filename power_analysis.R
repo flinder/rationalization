@@ -139,20 +139,22 @@ for(i in 1:length(d)){
 
 # Plot it
 df <- as.data.frame(do.call(rbind, cis))
-df$d <- as.factor(rep(d, each = 5))
-levels(df$d) <- c()
-df$N <- as.factor(rep(c(1:5), 4))
-colnames(df) <- c("lo", "hi", "d", "N")
+df$bias <- as.factor(rep(d, each = 5))
+df$N <- as.factor(rep(1:5, 4))
+levels(df$N) <- c("10", "100", "200", "500", "1000")
 
-p <- ggplot(df,aes(lo,hi))
-p <- p + facet_wrap(~ d, ncol = 2, scales = "fixed")
-p <- p + geom_errorbar(aes(x = N,ymin = lo,ymax = hi),width = .2)
+
+colnames(df) <- c("lo", "hi", "bias", "N")
+
+p <- ggplot(df,aes(bias, lo, hi, color = N))
+#p <- p + facet_wrap(~ d, ncol = 2, scales = "fixed")
+p <- p + geom_errorbar(aes(x = bias, ymin = lo, ymax = hi), position = "dodge", width = .5)
 p <- p + geom_hline(yintercept = 1)
-p <- p + coord_flip()
-p <- p + scale_x_discrete(breaks = c(1:5), labels = as.character(N))
-p <- p + ylab('Ratio of Mean Absolute Difference between S^ and C^') + xlab('N')
+#p <- p + coord_flip()
+p <- p + ylab('Ratio of Mean Absolute Difference between S^ and C^') 
+p <- p + xlab('Mean Bias (factor reduction in distance)')
 p <- p + theme_bw()
-ggsave("figures/power_sim.png", plot = p, width = 8, height = 8)
+ggsave("figures/power_sim.png", plot = p, width = 10, height = 6)
 
 
 
