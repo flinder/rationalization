@@ -49,6 +49,9 @@ pred2 <- predict(fit, dat[dat$group == 2, ])
 mean((dat[dat$group == 1, "self_eg1"] - pred1)^2)
 mean((dat[dat$group == 2, "self_eg2"] - pred2)^2)
 
+# calculate variances for power analysis
+
+
 # Bias in candidate
 mean((dat$self_eg1 - dat$can_eg1_1)^2, na.rm = T)
 mean((pred2 - dat$can_eg2_1[dat$group == 2])^2)

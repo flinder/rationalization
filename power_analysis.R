@@ -1,20 +1,71 @@
-# Analysis of simulated data following the hypothesized DGP of rationalization 
-# of party choice through missreporting of ideological positions
-# Author: Fridolin Linder
-
+# Power calculations for rationalization of party choice through missreporting 
+# of ideological positions
+# Fridolin Linder
 rm(list = ls())
 library(ggplot2)
 library(truncnorm)
+library(randomForest)
 
 # Getting realisitc estimates for pars of distribution of self position
-setwd("C:/Users/flinder/Dropbox/rationalization/rationalization")
-anes <- read.table('data/anes/anes.csv')
+# from anes and mturk prerun
+setwd("C:/Users/fridolin linder/Dropbox/rationalization/rationalization")
 
+## ANES
+anes <- read.table('data/anes/anes.csv')
 as <- anes$libcpre_self
-as_norm <- (as - min(as))/(max(as)-min(as))
-plot(density(as_norm,bw = 0.12,from = 0,to = 1),lwd = 2)
-x <- seq(0,1,by = 0.01)
-points(x,dtruncnorm(x,0,1,0.5,0.3),type = 'l',lty = 2,lwd = 2,col = 'red')
+as_norm <- (as - min(as)) / (max(as) - min(as))
+var(as_norm)
+plot(density(as_norm, bw = 0.12, from = 0, to = 1), lwd = 2)
+x <- seq(0, 1, by = 0.01)
+points(x, dtruncnorm(x, 0, 1, 0.5, 0.3), type = 'l', lty = 2, lwd = 2, 
+       col = 'red')
+
+## MTurk Prerun
+pre <- read.table('data/prerun/rat_prerun.csv', sep = ",")
+pre$self_eg1_s <- ((pre$self_eg1 - min(pre$self_eg1, na.rm = T)) / 
+                     (max(pre$self_eg1, na.rm = T) - min(pre$self_eg1, na.rm = T)))
+pre$self_eg2_s <- ((pre$self_eg2 - min(pre$self_eg2, na.rm = T)) / 
+                     (max(pre$self_eg2, na.rm = T) - min(pre$self_eg2, na.rm = T)))
+var(pre$self_eg1_s, na.rm = T)
+var(pre$self_eg2_s, na.rm = T)
+
+## Get variance for difference between prediction and report from the prerun
+
+# Recode climate change question
+pre$gwhow[is.na(pre$gwhow)] <- pre$gwhow2[!is.na(pre$gwhow2)]
+pre$gwhow2 <- NULL
+
+# Train predictive model
+mod <- self_eg1_s ~ hltref + gaymarry + gayadopt + abrtch + abrthlth + abrtinc + 
+  abrtbd + abrtrpe + abrtdth + abrtfin + fedenv + fedwlf + fedpoor + fedschool + 
+  drill + gwhap + gwhow + aauni + aawork + gun + comm
+fit <- randomForest(mod, data = pre[pre$group == 1, ],  importance = T)
+
+# Predicions
+pred <- predict(fit)
+sqrt(var((na.omit(pre$self_eg1_s) - pred)^2))
+
+
+# ==============================================================================
+# Parametric Power Analysis
+# Power for a two sample t-test (assuming known true self position)
+
+# Experiment 1: Bias in Self
+# Compare mean squared difference between reported and predicted self
+# assuming equal standard deviation of 0.5 in both groups 
+# (see writeup for details)
+
+power.t.test(delta = .05, power = .9, sd = 0.06, type = "two.sample", 
+             alternative = "one.sided", sig.level = 0.05)
+
+plot(density((pre$self - pred)^2, bw = 0.1, from = 0, to = 1), lwd = 2)
+x <- seq(0, 1, by = 0.01)
+points(x, dtruncnorm(x, 0, 1, 0.5, 0.3), type = 'l', lty = 2, lwd = 2, 
+       col = 'red')
+
+# ==============================================================================
+# Non-Parametric Power Analysis
+# Simulating data according to hypothesized DGP 
 
 
 ### Function simulating the data generating process for simple case:
@@ -37,7 +88,6 @@ points(x,dtruncnorm(x,0,1,0.5,0.3),type = 'l',lty = 2,lwd = 2,col = 'red')
 # rs_i = ts_i + d_i*(pp_i-ts_i), where, rs: reported self, ts: true self, 
 # pp: perceived party and i = 1,...,N are the subjects
 #
-# 
 
 genData <- function(N,md = 0.5,p1 = 0.2,p2 = 0.8,v = 0.1){
   require(truncnorm)
@@ -70,7 +120,6 @@ diff <- function(md, N, ratio = T){
 
 # Function to Sample difference/ratio of means
 sampDiff <- function(B, N, md) sapply(rep(md, B), diff, N = N)
-
 
 ### Power analysis by simulation
 cis <- list()
