@@ -5,14 +5,14 @@
 # Input: rat_prerun.csv (cleaned qualtrix data output)
 ################################################################################
 #setwd("~/Dropbox/rationalization/rationalization")
-setwd("c:/users/flinder/Dropbox/rationalization/rationalization")
+setwd("C:/Users/flinder/Dropbox/rationalization/analysis")
 library(randomForest)
 library(xtable)
 
 # Load data
 dat <- read.csv("Data/prerun/rat_prerun.csv", sep = ",")
 
-# REcode climate change question
+# Recode climate change question
 dat$gwhow[is.na(dat$gwhow)] <- dat$gwhow2[!is.na(dat$gwhow2)]
 dat$gwhow2 <- NULL 
 
@@ -45,6 +45,9 @@ mod <- self_eg1 ~ hltref + gaymarry + gayadopt + abrtch + abrthlth + abrtinc +
   drill + gwhap + gwhow + aauni + aawork + gun + comm
 fit <- randomForest(mod, data = dat[dat$group == 1, ],  importance = T)
 
+# Check Variable importance
+
+
 ## Naive experiment: mean squared distance in treatment and control
 ## for self position
 
@@ -75,9 +78,6 @@ dev.off()
 
 mean((dat[dat$group == 1, "self_eg1"] - pred1)^2)
 mean((dat[dat$group == 2, "self_eg2"] - pred2)^2)
-
-# calculate variances for power analysis
-
 
 # Bias in candidate
 mean((dat$self_eg1 - dat$can_eg1_1)^2, na.rm = T)

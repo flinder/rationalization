@@ -1,66 +1,83 @@
-# Find best predictors of self reported ideology from anes data using random forests
-rm(list=ls())
+# Find best predictors of self reported ideology from anes data using random 
+# forests
+
+rm(list = ls())
+
 library(ggplot2)
+library(scales)
 library(randomForestSRC)
 library(party)
+library(edarf)
 
-setwd("C:/Users/flinder/Dropbox/rationalization/rationalization")
-df = read.table('data/anes/anes.csv')
+setwd("C:/Users/flinder/Dropbox/rationalization/analysis")
+df <- read.table('data/anes/anes.csv')
+df$libcpre_self <- as.factor(df$libcpre_self)
 
 #=================
 # Predictive model
 #=================
 
-mod = formula(paste0('libcpre_self~',paste(names(df)[!names(df)=='libcpre_self'],collapse='+')))
-grow = rfsrc(mod,data=df,importance='permute',na.action='na.impute')
-grow2 = cforest(mod,data=df)
+mod <- formula(paste0('libcpre_self~', 
+                     paste(names(df)[!names(df) == 'libcpre_self'], 
+                           collapse = '+')
+                     )
+              )
+#grow <- rfsrc(mod, data = df, importance = 'permute',na.action = 'na.impute')
 
-#save(grow,file='grow_pred.RData')
-#load('grow_pred.RData')
+#save(grow,file='fitted_forest.RData')
+load('fitted_forest.RData')
 
 # Plot variable importance
-imp = sort(grow$importance,decreasing=T)
-plot(imp,seq(1:length(imp)),pch=18,cex=.8)
-imp[1:20]
+imp <- sort(grow$importance[, 1], decreasing = T)
+pdat <- data.frame(imp = imp, var = names(imp))
+rownames(pdat) <- NULL
+pdat$var <- factor(pdat$var, levels = pdat$var[order(pdat$imp)])
 
-clss = table(round(grow$predicted,0),df$libcpre_self)
+p <- ggplot(pdat, aes(var, imp))
+p <- p + geom_bar(stat = "identity")
+p <- p + scale_y_continuous(breaks = pretty_breaks())
+p <- p + labs(y = "Mean Increase in MSE after Permutation")
+p <- p + theme_bw()
+p <- p + theme(plot.margin = unit(rep(.15, 4), "in"), axis.title.y = element_blank())
+p <- p + coord_flip()
+p
+
+# Get category with highest predicted prob in out of bag prediction
+pred <- apply(grow$predicted.oob, 1, which.max)
+clss <- table(pred, df$libcpre_self)
 
 # perc correctly classified
-sum(diag(clss))/sum(clss) *100
+sum(diag(clss))/sum(clss) * 100
 
 # random classification
-r = sample(c(1:7),nrow(df),replace=T)
-clss1 = table(r,df$libcpre_self)
+r <- sample(c(1:7), nrow(df), replace = T)
+clss1 <- table(r, df$libcpre_self)
 
 # perc correctly classified
 sum(diag(clss1))/sum(clss1) *100
 
-d = data.frame(pred=grow$predicted,obs=df$libcpre_self,class=round(grow$predicted,0),
-               cor=ifelse(round(grow$predicted,0)==df$libcpre_self,1,0))
+## Visualize Classifier performance
+
+# Scatterplot
+d <- data.frame(pred = grow$predicted, obs = df$libcpre_self, 
+                class = round(grow$predicted, 0), 
+                cor = ifelse(round(grow$predicted, 0) == df$libcpre_self, 1, 0)
+                )
 p <- ggplot(d, aes(obs, pred))
-p <- p + geom_jitter(alpha=.3)
+p <- p + geom_jitter(alpha = .3)
+p <- p + labs(y = "OOB Predicted", x = "Observed")
 p
 
-## 20 Best predictors
-pred= names(imp)[1:20]
-mod.red = formula(paste0('libcpre_self~',paste(pred,collapse='+')))
-grow.red = rfsrc(mod.red,data=df,importance='permute',na.action='na.impute')
-clss.red = table(round(grow.red$predicted,0),df$libcpre_self)
-sum(diag(clss.red))/sum(clss) *100
+## 20 Best predictors and redced sample
+df.red <- df[sample(c(1:nrow(df)), 500), ]
+pred <- names(imp)[1:20]
+mod.red <- formula(paste0('libcpre_self~', paste(pred, collapse = '+')))
+#grow.red <- rfsrc(mod.red, data = df.red, importance = 'permute', 
+#                  na.action = 'na.impute'
+#                  )
+#save(grow.red, file = "reduced_fitted_forest.RData")
+load(reduced_fitted_forest.RData)
 
-## Visualize classification
-
-# Confusion PLot
-plot <- ggplot(as.data.frame(clss))
-plot + geom_tile(aes(x=Var1, y=Var2, fill=Freq))
-
-# Jittered scatterplot
-n = nrow(df.nna)
-a = as.numeric(df.nna$K1) + rnorm(n,0,0.1)
-b = as.numeric(forest$predicted) + rnorm(n,0,0.1)
-dta = data.frame(a,b)
-plot(a,b)
-
-ggplot(dta, aes(x=a, y=b)) +
-  geom_point(shape=19,      # Use solid circles
-             alpha=1/4)     # 1/4 opacity
+pred.red <- apply(grow.red$predicted.oob, 1, which.max)
+clss.red <- table(pred.red, df.red$libcpre_self)
+sum(diag(clss.red))/sum(clss.red) *100

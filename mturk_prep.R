@@ -1,5 +1,5 @@
 rm(list=ls())
-setwd("C:/Users/Fridolin Linder/Dropbox/rationalization/rationalization")
+setwd("C:/Users/flinder/Dropbox/rationalization/analysis")
 
 qualt.raw <- read.csv("Data/prerun/qualtrix/rationalization_prerun_raw.csv", 
                       header = T)
@@ -44,4 +44,4 @@ qualt[, grep("eg", colnames(qualt))] <- num_ideo
 colnames(qualt)[38] <- "can_eg1_1"
 
 # Output data file
-write.table(qualt, file = "Data/prerun/rat_prerun.csv", sep = ",")
+write.table(qualt, file = "Data/prerun/rat_prerun.csv", sep = ",", row.names = F)
