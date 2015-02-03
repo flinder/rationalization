@@ -1,14 +1,17 @@
-rm(list=ls())
-setwd("C:/Users/flinder/Dropbox/rationalization/analysis")
+# This script takes the outputs from MTurk and Qualtrics pre_run and prepares 
+# the data set used for analysis
+library(dplyr)
 
-qualt.raw <- read.csv("Data/prerun/qualtrix/rationalization_prerun_raw.csv", 
+rm(list=ls())
+
+qualt.raw <- read.csv("../data/pre_run/qualtrics/rationalization_prerun_raw.csv", 
                       header = T)
-turk <- read.csv("Data/prerun/mturk/Batch_1739345_batch_results.csv", 
+turk <- read.csv("../data/pre_run/mturk/Batch_1739345_batch_results.csv", 
                  header = T)
-code <- read.csv("Data/prerun/qualtrix/prerun_codebook.csv", 
+code <- read.csv("../data/pre_run/qualtrics/prerun_codebook.csv", 
                  header = T, sep = "\t")
 
-### Prep qualtrix data
+### Prep qualtrics data
 # Variable names
 qualt <- qualt.raw[-1, ]
 colnames(qualt) <- code$var_name
@@ -43,5 +46,10 @@ qualt[, grep("eg", colnames(qualt))] <- num_ideo
 # change typo varname
 colnames(qualt)[38] <- "can_eg1_1"
 
+# Anonymize data set
+head(qualt)
+out <- select(qualt, startDate:finished, hltref:comment, tcompl:group)
+
 # Output data file
-write.table(qualt, file = "Data/prerun/rat_prerun.csv", sep = ",", row.names = F)
+write.table(out, file = "../data/pre_run/pre_run_clean.csv", sep = ",", 
+            row.names = F)
