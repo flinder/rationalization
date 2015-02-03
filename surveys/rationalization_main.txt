@@ -1,0 +1,390 @@
+﻿rationalization_main
+
+t_welcome Timing
+    First Click (1)
+    Last Click (2)
+    Page Submit (3)
+    Click Count (4)
+
+welcome Welcome! This is a short survey on your opinions on some political issues. The survey will take approximately 5 to 10 minutes to complete.   Title of Project: Voter ideology and party preferences                Principal Investigator: Christopher Fariss, Ph.D.    You are being invited to volunteer to participate in a research study. This summary explains information about this research.           The purpose of this study is to analyze the connection between a person’s ideological position and her/his party preferences. You will be asked to answer questions on your opinion on current political issues as well as demographic information (e.g. your age, gender etc.). All information that could be used to identify you (like your MTurk ID) will be removed. The anonymized data will be available on the author's webpage (https://github.com/flinder)    If you have questions or concerns, you should contact the principal investigator via the messaging system on Amazon Mechanical Turk. If you have questions regarding your rights as a research subject or concerns regarding your privacy, you may contact the Office for Research Protections at 814-865-1775.    Your participation is voluntary and you may decide to stop at any time.  You do not have to answer any questions that you do not want to answer. 
+
+
+
+require Please read all questions very carefully and think about your answers. We check responses carefully in order to make sure that people have read the instructions for the task. We will only accept participants who clearly demonstrate that they have read and understood the survey. In order to participate it is furthermore required that you are older than 18 years and live in the United States.
+* I meet/accept these requirements (1)
+* I do not meet/accept these requirements (2)
+
+t_require Timing
+    First Click (1)
+    Last Click (2)
+    Page Submit (3)
+    Click Count (4)
+
+
+
+age Please enter your age in years
+If Please enter your age in years Is Less Than 18, Then Skip To End of SurveyIf Please enter your age in years Is Greater Than 99, Then Skip To End of Survey
+
+t_hlthref Timing
+    First Click (1)
+    Last Click (2)
+    Page Submit (3)
+    Click Count (4)
+
+hlthref Do you favor, oppose, or neither favor nor oppose the health care reform law passed in 2010? This law requires all Americans to buy health insurance and requires health insurance companies to accept everyone.
+* Favor (1)
+* Oppose (2)
+* Neither favor nor oppose (3)
+
+
+
+t_abrtch Timing
+    First Click (1)
+    Last Click (2)
+    Page Submit (3)
+    Click Count (4)
+
+abrtch Do you favor, oppose, or neither favor nor oppose abortion being legal if the woman chooses to have one?
+* Favor (1)
+* Oppose (2)
+* Neither favor nor oppose (3)
+
+
+
+t_gaymarry Timing
+    First Click (1)
+    Last Click (2)
+    Page Submit (3)
+    Click Count (4)
+
+gaymarry Which of these opinions comes closest to your view?
+* Gay and lesbian couples should be allowed to legally marry. (1)
+* Gay and lesbian couples should be allowed to form civil unions but not legally marry. (2)
+* There should be no legal recognition of a gay or lesbian couple's relationship. (3)
+
+
+
+t_gayadopt Timing
+    First Click (1)
+    Last Click (2)
+    Page Submit (3)
+    Click Count (4)
+
+gayadopt Do you think gay or lesbian couples should be legally permitted to adopt children?
+* Yes (1)
+* No (2)
+
+t_attchk1 Timing
+    First Click (1)
+    Last Click (2)
+    Page Submit (3)
+    Click Count (4)
+
+attchk1 People are very busy these days and many do not have time to follow what goes on in the government. Some do pay attention to politics but do not read questions carefully. To show that you have read this much, please ignore the question below and just hit the next button. How interested are you in information about what is going on in government politics?
+* Extremely interested (1)
+* Very interested (2)
+* Moderately interested (3)
+* Slightly interested (4)
+* Not interested at all (5)
+If Extremely interested Is Selected, Then Skip To End of SurveyIf Very interested Is Selected, Then Skip To End of SurveyIf Moderately interested Is Selected, Then Skip To End of SurveyIf Slightly interested Is Selected, Then Skip To End of SurveyIf Not interested at all Is Selected, Then Skip To End of Survey
+
+t_abrthlth Timing
+    First Click (1)
+    Last Click (2)
+    Page Submit (3)
+    Click Count (4)
+
+abrthlth What do you think about abortion being legal if staying pregnant would hurt the woman's health, but is very unlikely to cause her to die?
+* Favor (1)
+* Oppose (2)
+* Neither favor nor oppose (3)
+
+
+
+t_abrtinc Timing
+    First Click (1)
+    Last Click (2)
+    Page Submit (3)
+    Click Count (4)
+
+abrtinc What do you think about abortion being legal if the pregnancy was caused by the woman having sex with a blood relative?
+* Favor (1)
+* Oppose (2)
+* Neither favor nor oppose (3)
+
+
+
+t_abrtbd Timing
+    First Click (1)
+    Last Click (2)
+    Page Submit (3)
+    Click Count (4)
+
+abrtbd What do you think about abortion being legal if the fetus will be born with a serious birth defect?
+* Favor (1)
+* Oppose (2)
+* Neither favor nor oppose (3)
+
+
+
+t_fedwlf Timing
+    First Click (1)
+    Last Click (2)
+    Page Submit (3)
+    Click Count (4)
+
+fedwlf Should federal spending on welfare programs be increased, decreased or kept the same?
+* Increased (1)
+* Kept the same (2)
+* Decreased (3)
+
+
+
+t_abrtfin Timing
+    First Click (1)
+    Last Click (2)
+    Page Submit (3)
+    Click Count (4)
+
+abrtfin What do you think about abortion being legal if having the child would be extremely difficult for the woman financially?
+* Favor (1)
+* Oppose (2)
+* Neither favor nor oppose (3)
+
+t_attchk2 Timing
+    First Click (1)
+    Last Click (2)
+    Page Submit (3)
+    Click Count (4)
+
+attchk2 We are also interested in what sections people like to read in the newspaper. What people read in the newspaper might affect their opinions on current events. We also want to see if people are reading the questions carefully. To show that you have read this much, please mark both the none of the above and the all of the above boxes below. That is right, just select these two options.    What would you say are your favorite newspaper sections to read? (please check all that apply)
+• National (1)
+• Local (2)
+• International (3)
+• Comics (4)
+• Classified (5)
+• Style (6)
+• Sports (7)
+• Business (8)
+• Science and Technology (9)
+• Opinion (10)
+• None of the above (11)
+• All of the above (12)
+If None of the above Is Not Selected, Then Skip To End of SurveyIf All of the above Is Not Selected, Then Skip To End of Survey
+
+t_abrtrpe Timing
+    First Click (1)
+    Last Click (2)
+    Page Submit (3)
+    Click Count (4)
+
+abrtrpe What do you think about abortion being legal if the pregnancy was caused by the woman being raped?
+* Favor (1)
+* Oppose (2)
+* Neither favor nor oppose (3)
+
+
+
+t_fedpoor Timing
+    First Click (1)
+    Last Click (2)
+    Page Submit (3)
+    Click Count (4)
+
+fedpoor Should federal spending on aid to the poor be increased, decreased or kept the same?
+* Increased (1)
+* Kept the same (2)
+* Decreased (3)
+
+
+
+t_fedenv Timing
+    First Click (1)
+    Last Click (2)
+    Page Submit (3)
+    Click Count (4)
+
+fedenv Should federal spending on protecting the environment be increased, decreased or kept the same?
+* Increased (1)
+* Kept the same (2)
+* Decreased (3)
+
+
+
+t_fedschoo Timing
+    First Click (1)
+    Last Click (2)
+    Page Submit (3)
+    Click Count (4)
+
+fedschool Should federal spending on public schools be increased, decreased or kept the same?
+* Increased (1)
+* Kept the same (2)
+* Decreased (3)
+
+
+
+t_abrtdth Timing
+    First Click (1)
+    Last Click (2)
+    Page Submit (3)
+    Click Count (4)
+
+abrtdth What do you think about abortion being legal if staying pregnant could cause the woman to die?
+* Favor (1)
+* Oppose (2)
+* Neither favor nor oppose (3)
+
+
+
+t_drill Timing
+    First Click (1)
+    Last Click (2)
+    Page Submit (3)
+    Click Count (4)
+
+drill Do you favor, oppose or neither favor nor oppose increased offshore drilling for oil and natural gas in U.S. waters?
+* Favor (1)
+* Oppose (2)
+* Neither Favor nor Oppose (3)
+
+
+
+t_gwhap Timing
+    First Click (1)
+    Last Click (2)
+    Page Submit (3)
+    Click Count (4)
+
+gwhap You may have heard about the idea that the world's temperature may have been going up slowly over the past 100 years. What is your personal opinion on this? Do you think this has probably been happening, or do you think it probably hasn't been happening?
+* Has probably been happening (1)
+* Probably hasn't been happening (2)
+
+
+
+t_gwhow Timing
+    First Click (1)
+    Last Click (2)
+    Page Submit (3)
+    Click Count (4)
+
+Answer If You may have heard about the idea that the world's temperature may have been going up slowly over the past 100 years. What is your personal opinion on this? Do you think this has probably been happ... Has probably been happening Is Selected
+gwhow Who do you think a rise in the world's temperatures would be caused by?
+* Mostly human activity (1)
+* Mostly natural causes (2)
+* About equally by human activity and by natural causes (3)
+
+
+
+t_gwhow2 Timing
+    First Click (1)
+    Last Click (2)
+    Page Submit (3)
+    Click Count (4)
+
+Answer If You may have heard about the idea that the world's temperature may have been going up slowly over the past 100 years. What is your personal opinion on this? Do you think this has probably been happ... Probably hasn't been happening Is Selected
+gwhow2 Assuming it's happening, who do you think a rise in the world's temperatures would be caused by?
+* Mostly human activity (1)
+* Mostly natural causes (2)
+* About equally by human activity and by natural causes (3)
+
+
+
+t_aauni Timing
+    First Click (1)
+    Last Click (2)
+    Page Submit (3)
+    Click Count (4)
+
+aauni Do you favor, oppose, or neither favor nor oppose allowing universities to increase the number of black students studying at their schools by considering race along with other factors when choosing students?
+* Favor (1)
+* Oppose (2)
+* Neither favor nor oppose (3)
+
+
+
+t_aawork Timing
+    First Click (1)
+    Last Click (2)
+    Page Submit (3)
+    Click Count (4)
+
+aawork Do you favor, oppose, or neither favor nor oppose allowing companies to increase the number of black workers by considering race along with other factors when choosing employees?
+* Favor (1)
+* Oppose (2)
+* Neither favor nor oppose (3)
+
+
+
+t_gun Timing
+    First Click (1)
+    Last Click (2)
+    Page Submit (3)
+    Click Count (4)
+
+gun Do you think the federal government should make it more difficult for people to buy a gun than it is now, make it easier for people to buy a gun, or keep the rules about the same as they are now?
+* More difficult (1)
+* Easier (2)
+* Keep the rules about the same (3)
+
+
+
+t_comm Timing
+    First Click (1)
+    Last Click (2)
+    Page Submit (3)
+    Click Count (4)
+
+comm Where would you place yourself on this scale?
+* 1 Government should see to a job and a good standard of living (1)
+* 2 (2)
+* 3 (3)
+* 4 (4)
+* 5 (5)
+* 6 (6)
+* 7 Government should let each person get ahead on their own (7)
+
+pref Which political party do you prefer most?
+* Democrats (1)
+* Republicans (2)
+* Other party (3)
+
+Answer If Which political party do you prefer? Other party Is Selected
+pref2 Which one?
+
+self_eg1 Where would you rate yourself on this scale?
+______ . (1)
+
+Answer If Which political party would you say you prefer most? Other party Is Not Selected
+cand_eg1_1 Where would you rate ${q://QID3/ChoiceGroup/SelectedChoices} on this scale?
+______ . (1)
+
+Answer If Which political party would you say you prefer most? Other party Is Selected
+can_eg1_2 Where would you rate ${q://QID6/ChoiceTextEntryValue} on this scale?
+______ . (1)
+
+Answer If Which political party would you say you prefer most? Other party Is Not Selected
+can_eg2_1 Where would you rate ${q://QID3/ChoiceGroup/SelectedChoices} on this scale?
+______ . (1)
+
+Answer If Which political party would you say you prefer most? Other party Is Selected
+can_eg2_2 Where would you rate ${q://QID6/ChoiceTextEntryValue} on this scale?
+______ . (1)
+
+self_eg2 Where would you rate yourself on this scale?
+______ . (1)
+
+sex Are you male or female?
+* Male (1)
+* Female (2)
+* Not applicable (3)
+
+edu What is the highest level of school you have completed or thehighest degree you have received?
+* Less than high school credential (1)
+* High school credential (2)
+* Some post-high-school, no bachelor's degree (3)
+* Bachelor's degree (4)
+* Graduate degree (5)
+
+comment Please let me know if you have any comments on this survey.
+

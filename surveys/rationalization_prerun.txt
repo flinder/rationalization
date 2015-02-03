@@ -1,0 +1,164 @@
+﻿rationalization_prerun
+
+welcome Welcome! This is a short survey on your opinions on some political issues. Please answer all the questions honestly. The survey will take approximately 5 to 10 minutes to complete.   Title of Project: Voter ideology and party preferences                                  Principal Investigator: Christopher Fariss, Ph.D.     You are being invited to volunteer to participate in a research study. This summary explains information about this research.             The purpose of this study is to analyze the connection between a person’s ideological position and her/his party preferences. You will be asked to answer questions on your opinion on current political issues as well as demographic information (e.g. your age, gender etc.). All information that could be used to identify you (like your MTurk ID) will be removed. The anonymized data will be available on the author's webpage (https://github.com/flinder)     If you have questions or concerns, you should contact the principal investigator via the messaging system on Amazon Mechanical Turk. If you have questions regarding your rights as a research subject or concerns regarding your privacy, you may contact the Office for Research Protections at 814-865-1775.         Your participation is voluntary and you may decide to stop at any time.  You do not have to answer any questions that you do not want to answer. 
+
+hlthref Do you favor, oppose, or neither favor nor oppose the health care reform law passed in 2010? This law requires all Americans to buy health insurance and requires health insurance companies to accept everyone.
+* Favor (1)
+* Oppose (2)
+* Neither favor nor oppose (3)
+
+gaymarry Which of these opinions comes closest to your view?
+* Gay and lesbian couples should be allowed to legally marry. (1)
+* Gay and lesbian couples should be allowed to form civil unions but not legally marry. (2)
+* There should be no legal recognition of a gay or lesbian couple's relationship. (3)
+
+gayadopt Do you think gay or lesbian couples should be legally permitted to adopt children?
+* Yes (1)
+* No (2)
+
+abrtch Do you favor, oppose, or neither favor nor oppose abortion being legal if the woman chooses to have one?
+* Favor (1)
+* Oppose (2)
+* Neither favor nor oppose (3)
+
+abrthlth What do you think about abortion being legal if staying pregnant would hurt the woman's health, but is very unlikely to cause her to die?
+* Favor (1)
+* Oppose (2)
+* Neither favor nor oppose (3)
+
+abrtinc What do you think about abortion being legal if the pregnancy was caused by the woman having sex with a blood relative?
+* Favor (1)
+* Oppose (2)
+* Neither favor nor oppose (3)
+
+abrtbd What do you think about abortion being legal if the fetus will be born with a serious birth defect?
+* Favor (1)
+* Oppose (2)
+* Neither favor nor oppose (3)
+
+abrtrpe What do you think about abortion being legal if the pregnancy was caused by the woman being raped?
+* Favor (1)
+* Oppose (2)
+* Neither favor nor oppose (3)
+
+abrtdth What do you think about abortion being legal if staying pregnant could cause the woman to die?
+* Favor (1)
+* Oppose (2)
+* Neither favor nor oppose (3)
+
+abrtfin What do you think about abortion being legal if having the child would be extremely difficult for the woman financially?
+* Favor (1)
+* Oppose (2)
+* Neither favor nor oppose (3)
+
+fedenv Should federal spending on protecting the environment be increased, decreased or kept the same?
+* Increased (1)
+* Kept the same (2)
+* Decreased (3)
+
+fedwlf Should federal spending on welfare programs be increased, decreased or kept the same?
+* Increased (1)
+* Kept the same (2)
+* Decreased (3)
+
+fedpoor Should federal spending on aid to the poor be increased, decreased or kept the same?
+* Increased (1)
+* Kept the same (2)
+* Decreased (3)
+
+fedschool Should federal spending on public schools be increased, decreased or kept the same?
+* Increased (1)
+* Kept the same (2)
+* Decreased (3)
+
+drill Do you favor, oppose or neither favor nor oppose increased offshore drilling for oil and natural gas in U.S. waters?
+* Favor (1)
+* Oppose (2)
+* Neither Favor nor Oppose (3)
+
+gwhap You may have heard about the idea that the world's temperature may have been going up slowly over the past 100 years. What is your personal opinion on this? Do you think this has probably been happening, or do you think it probably hasn't been happening?
+* Has probably been happening (1)
+* Probably hasn't been happening (2)
+
+Answer If You may have heard about the idea that the world's temperature may have been going up slowly over the past 100 years. What is your personal opinion on this? Do you think this has probably been happ... Has probably been happening Is Selected
+gwhow Who do you think a rise in the world's temperatures would be caused by?
+* Mostly human activity (1)
+* Mostly natural causes (2)
+* About equally by human activity and by natural causes (3)
+
+Answer If You may have heard about the idea that the world's temperature may have been going up slowly over the past 100 years. What is your personal opinion on this? Do you think this has probably been happ... Probably hasn't been happening Is Selected
+gwhow2 Assuming it's happening, who do you think a rise in the world's temperatures would be caused by?
+* Mostly human activity (1)
+* Mostly natural causes (2)
+* About equally by human activity and by natural causes (3)
+
+aauni Do you favor, oppose, or neither favor nor oppose allowing universities to increase the number of black students studying at their schools by considering race along with other factors when choosing students?
+* Favor (1)
+* Oppose (2)
+* Neither favor nor oppose (3)
+
+aawork Do you favor, oppose, or neither favor nor oppose allowing companies to increase the number of black workers by considering race along with other factors when choosing employees?
+* Favor (1)
+* Oppose (2)
+* Neither favor nor oppose (3)
+
+gun Do you think the federal government should make it more difficult for people to buy a gun than it is now, make it easier for people to buy a gun, or keep the rules about the same as they are now?
+* More difficult (1)
+* Easier (2)
+* Keep the rules about the same (3)
+
+comm Where would you place yourself on this scale?
+* 1 Government should see to a job and a good standard of living (1)
+* 2 (2)
+* 3 (3)
+* 4 (4)
+* 5 (5)
+* 6 (6)
+* 7 Government should let each person get ahead on their own (7)
+
+pref Which political party do you prefer most?
+* Democrats (1)
+* Republicans (2)
+* Other party (3)
+
+Answer If Which political party do you prefer? Other party Is Selected
+pref2 Which one?
+
+self_eg1 Where would you rate yourself on this scale?
+______ . (1)
+
+Answer If Which political party would you say you prefer most? Other party Is Not Selected
+cand_eg1_1 Where would you rate ${q://QID3/ChoiceGroup/SelectedChoices} on this scale?
+______ . (1)
+
+Answer If Which political party would you say you prefer most? Other party Is Selected
+can_eg1_2 Where would you rate ${q://QID6/ChoiceTextEntryValue} on this scale?
+______ . (1)
+
+Answer If Which political party would you say you prefer most? Other party Is Not Selected
+can_eg2_1 Where would you rate ${q://QID3/ChoiceGroup/SelectedChoices} on this scale?
+______ . (1)
+
+Answer If Which political party would you say you prefer most? Other party Is Selected
+can_eg2_2 Where would you rate ${q://QID6/ChoiceTextEntryValue} on this scale?
+______ . (1)
+
+self_eg2 Where would you rate yourself on this scale?
+______ . (1)
+
+age Please enter your age in years
+
+sex Are you male or female?
+* Male (1)
+* Female (2)
+* Not applicable (3)
+
+edu What is the highest level of school you have completed or thehighest degree you have received?
+* Less than high school credential (1)
+* High school credential (2)
+* Some post-high-school, no bachelor's degree (3)
+* Bachelor's degree (4)
+* Graduate degree (5)
+
+comment Please let me know if you have any comments on this survey.
+
