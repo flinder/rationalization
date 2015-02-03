@@ -45,8 +45,20 @@ mod <- self_eg1 ~ hltref + gaymarry + gayadopt + abrtch + abrthlth + abrtinc +
   drill + gwhap + gwhow + aauni + aawork + gun + comm
 fit <- randomForest(mod, data = dat[dat$group == 1, ],  importance = T)
 
-# Check Variable importance
+# Plot variable importance
+imp <- sort(fit$importance[, 1], decreasing = T)
+pdat <- data.frame(imp = imp, var = names(imp))
+rownames(pdat) <- NULL
+pdat$var <- factor(pdat$var, levels = pdat$var[order(pdat$imp)])
 
+p <- ggplot(pdat, aes(var, imp))
+p <- p + geom_bar(stat = "identity")
+p <- p + scale_y_continuous(breaks = pretty_breaks())
+p <- p + labs(y = "Mean Increase in MSE after Permutation")
+p <- p + theme_bw()
+p <- p + theme(plot.margin = unit(rep(.15, 4), "in"), axis.title.y = element_blank())
+p <- p + coord_flip()
+ggsave(plot = p, filenam = "figures/varimp_prerun.png")
 
 ## Naive experiment: mean squared distance in treatment and control
 ## for self position

@@ -40,7 +40,7 @@ p <- p + labs(y = "Mean Increase in MSE after Permutation")
 p <- p + theme_bw()
 p <- p + theme(plot.margin = unit(rep(.15, 4), "in"), axis.title.y = element_blank())
 p <- p + coord_flip()
-p
+ggsave(plot = p, filenam = "figures/varimp_anes.png")
 
 # Get category with highest predicted prob in out of bag prediction
 pred <- apply(grow$predicted.oob, 1, which.max)
