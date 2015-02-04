@@ -9,9 +9,8 @@ library(randomForestSRC)
 library(party)
 library(edarf)
 
-setwd("C:/Users/flinder/Dropbox/rationalization/analysis")
-df <- read.table('data/anes/anes.csv')
-df$libcpre_self <- as.factor(df$libcpre_self)
+df <- read.table('../data/preparation/anes_clean.csv', sep = ",", header = T)
+#df$libcpre_self <- as.factor(df$libcpre_self)
 
 #=================
 # Predictive model
@@ -28,11 +27,12 @@ mod <- formula(paste0('libcpre_self~',
 load('fitted_forest.RData')
 
 # Plot variable importance
-imp <- sort(grow$importance[, 1], decreasing = T)
+imp <- sort(grow$importance, decreasing = T)
 pdat <- data.frame(imp = imp, var = names(imp))
 rownames(pdat) <- NULL
 pdat$var <- factor(pdat$var, levels = pdat$var[order(pdat$imp)])
 
+# plot importance of all predictors
 p <- ggplot(pdat, aes(var, imp))
 p <- p + geom_bar(stat = "identity")
 p <- p + scale_y_continuous(breaks = pretty_breaks())
