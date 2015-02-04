@@ -1,13 +1,7 @@
----
-bibliography:
-- '../../../Documents/Literature/MainLib.bib'
-...
+## Misreporting of ideological self placement to rationalize party preferences 
 
-Misreporting of ideological self placement to rationalize party preferences {#misreporting-of-ideological-self-placement-to-rationalize-party-preferences .unnumbered}
-===========================================================================
 
-Theory
-======
+## Theory/Motivation
 
 Classical theories of rational or economic voting assume that
 individuals’ candidate or party preferences are a function of the
@@ -75,6 +69,11 @@ trained [^1]. The issue questions will then be asked in the experimental
 groups and the predictive model is used to get an estimate $S^*$ of the
 ‘uncontaminated’ $S$ for each individual.
 
+[^1]: I select the predictors from the set of variables that according
+    to a machine learning algorithm best predict ideological self
+    placement in the American National Election Study. For additional
+    information: https://github.com/flinder/rationalization/blob/master/analysis/ideology_prediction.R
+
 The bias in $\hat{S}$ is measured by the distance between the prediction
 and the reported position in the treatment and control group of the
 first experiment. The bias in $\hat{C}$ is measured by comparing the
@@ -95,8 +94,7 @@ as reported perceived party positions. This has important implications
 for substantive research for example on the mechanisms underlying vote
 choice.
 
-Predictive Model
-================
+## Predictive Model
 
 The predictive model will be trained on the data from group one. Since
 in group one $S$ is asked first, it is not subject to the bias proposed
@@ -108,15 +106,13 @@ observation is used (i.e. a prediction for an observation is made by
 dropping it down only the trees that have been fit to the bootstrap
 samples that did not contain this observation).
 
-Hypothesis Tests and Sample Size
-================================
+## Hypothesis Tests and Sample Size
 
 If the necessary assumptions can be defended, the analysis will consist
 of two simple t-tests, testing for significant difference between the
 estimated distances between self and candidate in the two groups.
 
-Experiment 1: Bias in $\hat{S}$
--------------------------------
+### Experiment 1: Bias in $\hat{S}$
 
 Let $X = (S^*_1 - \hat{S}_1)^2$ be the difference between the estimate
 of the true self position and the reported self position in group 1 ($S$
@@ -160,8 +156,7 @@ lower power of non-parametric alternatives. After describing the
 analysis for the second experiment I will present a simulation based
 approach to arrive at an estimated necessary sample size.
 
-Experiment 2: Bias in $\hat{C}$
--------------------------------
+### Experiment 2: Bias in $\hat{C}$
 
 Let $Z = (\hat{S}_1 - \hat{C}_1)^2$ be the measure for the distance
 between self and candidate in group one and $W = (S^*_2 - \hat{C}_2)^2$
@@ -170,6 +165,10 @@ standard deviations $\sigma_Z$ and $\sigma_W$. The hypotheses are then:
 $H_0: \mu_Z \geq \mu_W$ and $H_1: \mu_Z < \mu_W$. The same test as for
 experiment one can be used to test the hypothesis, given the assumptions
 are met.
+
+[^2]: Note that, if the proposed data generating mechanism is at work
+    $Z^* = (S^*_1 - \hat{C}_1)^2 = Z$ should hold.
+
 
 Considering the problems with classical sample size calculation
 described above, I conducted a monte carlo simulation of experiment two,
@@ -189,6 +188,9 @@ course these calculations are very rough and based on many assumptions
 (see the github repository for the exact data generating process that
 has been used).
 
+[^3]: for details see <https://github.com/flinder/rationalization>
+
+
 ![Simulation of sampling distribution ($2.5^{th}$ to $97.5^{th}$
 quantile) of the ratio of the mean absolute distance between $S^*$ or
 $\hat{S}$ and $\hat{C}$ for different sample sizes ($N$) and effect
@@ -199,45 +201,26 @@ candidate by 50%. The ratio of the absolute difference between treatment
 and control group is therefore exactly this
 value.\label{fig:power_sim}](figures/power_sim.png)
 
-Data Collection
-===============
+## Data Collection
 
 Since a relatively large sample size is needed I will collect the data
 using Amazon’s Mechanical Turk (MTurk). Several studies showed that
-MTurk provides data of reasonable quality for research purposes. MTurk
-workers are redirected to a Qualtrics survey to complete the experiment.
+MTurk provides data of reasonable quality for research purposes [@mason2012conducting; @berinsky2012evaluating; @buhrmester2011amazon]. MTurk
+workers are redirected to a Qualtrics survey to complete the experiment. The specific survey questions are available on github[^surveys].
+
+[^surveys]: https://github.com/flinder/rationalization/tree/master/surveys
+
+### Pre Run
 
 In preparation for the main data collection, I conducted a test run of
-the experiment with 50 participants. Table \ref{tab:bal} displays age education
-and gender by experimental group. Figure \ref{fig:time} displays the time
-participants needed to complete the survey. My estimate before the pre
-run was higher than the time needed by most participants, I will include
-some attention checks into the final run. Figure \ref{fig:prediction}
-displays predictions from the predictive model trained to the data in
-group 1.
+the experiment with 50 participants. Mostly to test the procedures to connect Qualtrics and MTurk and to check how well the predictive model performs. 
+
+![Permutation importance from random forest. The left panel shows the importance of the predictive model fit to the ANES data, the right figure shows the results from the pre run.\label{fig:varimp}](figures/varimp.png)
+
+### Main study
+
+The main study will differ from the pre run only in procedural details. Since some respondents where very quick in completing the survey I added two attention checks [@berinsky2014separating] and will track the time spent on each item. The core of the survey remained unchanged.  
 
 
-                Group 1   Group 2
-  ----------- --------- ---------
-          Age     31.62     35.77
-    Education      3.29      3.65
-       Gender      1.54      1.35
 
-  : Demographic balance statistics for pre run data \label{tab:bal}
 
-![Completion time in minutes for survey on Amazon
-MTurk.\label{fig:time}](figures/time.png)
-
-![Ideological self placement agains prediction from random forest model.
-The model has been trained on group one. Predictions for group one are
-based on out-of-bag data.\label{fig:prediction}](figures/prediction.png)
-
-[^1]: I select the predictors from the set of variables that according
-    to a machine learning algorithm best predict ideological self
-    placement in the American National Election Study. For additional
-    information: <https://github.com/flinder/rationalization>.
-
-[^2]: Note that, if the proposed data generating mechanism is at work
-    $Z^* = (S^*_1 - \hat{C}_1)^2 = Z$ should hold.
-
-[^3]: for details see <https://github.com/flinder/rationalization>
