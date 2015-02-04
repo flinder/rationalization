@@ -1,5 +1,7 @@
-## Misreporting of ideological self placement to rationalize party preferences 
+% Misreporting of ideological self placement to rationalize party preferences 
+% Fridolin Linder[^contact]
 
+[^contact]: Fridolin Linder is a Ph.D. student in political science at Pennsylvania State University ([fridolin.linder@gmail.com](mailto:fridolin.linder@gmail.com)).
 
 ## Theory/Motivation
 
@@ -72,7 +74,7 @@ groups and the predictive model is used to get an estimate $S^*$ of the
 [^1]: I select the predictors from the set of variables that according
     to a machine learning algorithm best predict ideological self
     placement in the American National Election Study. For additional
-    information: https://github.com/flinder/rationalization/blob/master/analysis/ideology_prediction.R
+    information: <https://github.com/flinder/rationalization/blob/master/analysis/ideology_prediction.R>
 
 The bias in $\hat{S}$ is measured by the distance between the prediction
 and the reported position in the treatment and control group of the
@@ -208,19 +210,27 @@ using Amazon’s Mechanical Turk (MTurk). Several studies showed that
 MTurk provides data of reasonable quality for research purposes [@mason2012conducting; @berinsky2012evaluating; @buhrmester2011amazon]. MTurk
 workers are redirected to a Qualtrics survey to complete the experiment. The specific survey questions are available on github[^surveys].
 
-[^surveys]: https://github.com/flinder/rationalization/tree/master/surveys
+[^surveys]: <https://github.com/flinder/rationalization/tree/master/surveys>
 
 ### Pre Run
 
 In preparation for the main data collection, I conducted a test run of
-the experiment with 50 participants. Mostly to test the procedures to connect Qualtrics and MTurk and to check how well the predictive model performs. 
+the experiment with 50 participants. Mostly to test the procedures to connect Qualtrics and MTurk. Figures \ref{fig:bal} to ref{fig:prediction} show some description of the data obtained from this pre run of the experiment. However, the sample was very small so the results from the predicitve model are not very reliable (the random forest has been fit to the 24 observations in group one. Group 2 has been left out since the self position is expected to be biased in this group).
 
-![Permutation importance from random forest. The left panel shows the importance of the predictive model fit to the ANES data, the right figure shows the results from the pre run.\label{fig:varimp}](figures/varimp.png)
+![Balance statistics for a sample of variables from pre run of the experiment.\label{fig:bal}](figures/bal.png)
+
+![Time in minutes to complete survey for all respondents in the pre run of the experiment.\label{fig:time}](figures/time.png)
+
+![Standardized permutation importance from random forest for anes data and data from pre run of the experiment.\label{fig:varimp}](figures/varimp.png)
+
+![Prediction of ideological self placement from answers to issue items. Predicions are from a random forest, fitted to the data from group 1 (self first). For the predictions in group one, only out of bag predictions are used.\label{fig:prediction}](figures/prediction.png)
+
 
 ### Main study
 
 The main study will differ from the pre run only in procedural details. Since some respondents where very quick in completing the survey I added two attention checks [@berinsky2014separating] and will track the time spent on each item. The core of the survey remained unchanged.  
 
+### Pre Registration
 
-
+This research plan will be used to pre register the study, before the main study is conducted. 
 
