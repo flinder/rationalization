@@ -3,10 +3,6 @@
 
 [^contact]: Fridolin Linder is a Ph.D. student in political science at Pennsylvania State University ([fridolin.linder@gmail.com](mailto:fridolin.linder@gmail.com)).
 
-
-This research plan is frozen in the branch pre_registration and will not be edited anymore after the data collection starts.
-It therefore serves as a public pre registration of the study. 
-
 ## Theory/Motivation
 
 Classical theories of rational or economic voting assume that
