@@ -1,0 +1,9 @@
+See the original survey (/surveys/rationalization_main.txt) for full questions and answer codings.
+
+Some variables have been recoded/ generated
+self_placement: ideological self placement as asked in questions (self_eg1, self_eg2)
+candidate_placement: ideological placement of preferred party as asked in questions (cand_eg1_1, can_eg1_2, can_eg2_1, can_eg2_2)
+group: Experimental group; Codes: (1): Self asked first, (2): Candidate asked first
+tcompl: Time in minutes it took the respondent to complete the survey (calculated from startDate and endDate)
+
+See 'analysis/MAIN_data_prep.R' for the data preparation script.
