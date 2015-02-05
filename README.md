@@ -3,6 +3,8 @@ Rationalization
 
 This repo contains all files pertaining to the preparation and analysis of my project "Misreporting of ideological self placement to rationalize party preferences". Comments Welcome
 
+The branch 'pre_registration' is locked and contains the project outline and status before the main data collection was conducted.
+
 Files:
 ------
 - analysis
