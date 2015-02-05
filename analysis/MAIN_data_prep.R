@@ -25,17 +25,11 @@ dat$mturkCode[dat$mturkCode == "no survey code given!  Worker ID: A248LF7KKHXZ14
 dat$mturkCode[grep("code in email", dat$mturkCode)] <- NA # Put worker ID into code field
 dat <- dat[!is.na(dat$mturkCode), ]
 dat$mturkCode <- as.numeric(dat$mturkCode)
-
-# Drop fake codes
-dat <- dat[dat$mturkCode != 2463330868, ]
 dat$comment[grep("@", dat$comment)]  <- NA # Delete personal email from comments
 
 # Get rid of special chars in comments
 dat$comment <- gsub("[[:punct:]]", " ", dat$comment)
 dat$pref2 <- gsub("[[:punct:]]", " ", dat$pref2)
-
-
-dat$comment[grep("Yes, there is climate", dat$comment)] <- NA # Special chars in comment
 
 # Completion time
 dat$startDate <- strptime(dat$startDate, format = "%m/%d/%Y %H:%M")
