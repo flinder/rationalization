@@ -1,5 +1,7 @@
-Rationalization
+Rationalization: PRE REGISTRATION REPOSITORY
 ===============
+
+THIS BRANCH SERVES AS A PRE REGISTRATION OF THE STUDY. IT WILL NOT BE CHANGED AFTER THE DATA COLLECTION HAS STARTED.
 
 This repo contains all files pertaining to the preparation and analysis of my project "Misreporting of ideological self placement to rationalize party preferences". Comments Welcome
 
