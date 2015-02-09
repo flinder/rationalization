@@ -14,6 +14,7 @@ Files:
 	+ power_analysis.R: Simulation of hypothesized DGP and power analysis to determine sample size
 	+ prerun_data_prep.R: Produces pre_run_clean.csv from raw output of qualtrics and Mturk (not here due to data privacy)
 	+ MAIN_data_prep.R: Produces main_study_clean.csv and main_study_geo_loc.csv from raw output of qualtrics and Mturk (not here due to data privacy)
+	+ analysis_main.R: Description and analysis of main study: Main results for paper
 - data
 	+ pre_run/pre_run_clean.csv: Cleaned and anonymized data from pre run of the experiment
 	+ preparation/anes_clean.csv: cleaned ANES data for use in ideology_prediction.R

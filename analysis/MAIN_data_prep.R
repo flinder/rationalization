@@ -47,7 +47,7 @@ mergeNA <- function(x, y) {
   x[is.na(x)] <- y[is.na(x)]
   return(x)
 } 
-dat$self_placment <- mergeNA(dat$self_eg1, dat$self_eg2)
+dat$self_placement <- mergeNA(dat$self_eg1, dat$self_eg2)
 dat$candidate_placement <- mergeNA(mergeNA(dat$can_eg1_1, dat$can_eg1_2),
                                   mergeNA(dat$can_eg2_1, dat$can_eg2_2))
 dat <- dat[, -grep("eg", colnames(dat))]

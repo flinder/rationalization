@@ -352,6 +352,8 @@ pref Which political party do you prefer most?
 Answer If Which political party do you prefer? Other party Is Selected
 pref2 Which one?
 
+[Will be recoded to, Independent (3), Green Party (4), Libertarian (5)]
+
 self_eg1 Where would you rate yourself on this scale?
 ______ . (1)
 

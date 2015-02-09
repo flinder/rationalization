@@ -1,8 +1,9 @@
+rm(list = ls())
 ################################################################################
 # Data analysis for rationalizaion Experiment
 # Fridolin Linder
 #
-# Input: rat_prerun.csv (cleaned qualtrix data output)
+# Input: main_study_clean.csv (cleaned qualtrix data output)
 ################################################################################
 #setwd("~/Dropbox/rationalization/rationalization")
 library(randomForest)
@@ -10,9 +11,10 @@ library(xtable)
 library(ggplot2)
 library(scales)
 library(grid)
+library(dplyr)
 
 # Load data
-dat <- read.csv("../data/pre_run/pre_run_clean.csv", sep = ",")
+dat <- read.csv("../data/main_study/main_study_clean.csv", sep = ",")
 
 # Recode climate change question
 dat$gwhow[is.na(dat$gwhow)] <- dat$gwhow2[!is.na(dat$gwhow2)]
@@ -40,20 +42,46 @@ p <- ggplot(pdat, aes(var, val, fill = grp))
 p <- p + geom_bar(position = "dodge", stat = "identity")
 p <- p + theme_bw() + scale_fill_brewer(palette="Set2")
 p <- p + labs(y = "Unit of Variable", x = "")
-ggsave(plot = p, filenam = "../figures/bal.png")
+ggsave(plot = p, filenam = "../figures/bal_main.png")
 
 # Time to complete survey
 p <- ggplot(dat, aes(tcompl))
 p <- p + geom_density() + theme_bw()
 p <- p + geom_histogram(aes(y = ..density..), colour = "#FC8D62", fill = "#66C2A5",
-                        alpha = 0.9) 
+                        alpha = 0.8, binwidth = 1) 
 p <- p + labs(x = "Time in Minutes")
-ggsave(plot = p, filenam = "../figures/time.png")
+ggsave(plot = p, filenam = "../figures/main/time.png")
 
-# Variable importance in prerun compared to pred model from anes
+# Deal with other pref = other party
+dat$pref2[dat$pref2 == ""] <- NA
+dat$pref2_fac <- NA
+dat$pref2_fac[grep("^[I,i]ndepend[e,a]nt$", dat$pref2)] <- 3
+dat$pref2_fac[grep("^[G,g]reen$", dat$pref2)] <- 4
+dat$pref2_fac[grep("^[L,l]ibertarian$", dat$pref2)] <- 5
+dat$pref[dat$pref == 3]  <- NA
+dat$pref <- apply(cbind(dat$pref2_fac, dat$pref), 1, sum, na.rm = TRUE)
+dat$pref <- factor(dat$pref, labels = c("democrat", "republican", 
+                                        "independent", "green", "libertarian"),
+                   levels = c(1:5))
+dat$pref2_fac <- NULL
 
-# Train predictive model
-mod <- self_eg1 ~ hltref + gaymarry + gayadopt + abrtch + abrthlth + abrtinc + 
+# Plot preferences
+p <- ggplot(dat, aes(dat$pref)) + geom_bar()
+p <- p + labs(x = "Prefered Party") + theme_bw()
+ggsave(plot = p, filenam = "../figures/main/preferences.png")
+
+### Train predictive model
+
+# Recode opinion variables to factors
+vars_to_recode <- c("hltref", "gaymarry", "gayadopt", "abrtch", "abrthlth", "abrtinc", 
+                      "abrtbd", "abrtrpe", "abrtdth", "abrtfin", "fedenv", "fedwlf", 
+                      "fedpoor", "fedschool", "drill", "gwhap", "gwhow", "aauni", 
+                      "aawork", "gun")
+for(var in vars_to_recode)
+  dat[, var] <- as.factor(dat[, var])
+
+
+mod <- self_placement ~ hltref + gaymarry + gayadopt + abrtch + abrthlth + abrtinc + 
   abrtbd + abrtrpe + abrtdth + abrtfin + fedenv + fedwlf + fedpoor + fedschool + 
   drill + gwhap + gwhow + aauni + aawork + gun + comm + edu
 fit <- randomForest(mod, data = dat[dat$group == 1, ],  importance = T)
@@ -63,53 +91,23 @@ pdat <- data.frame(imp = imp, var = names(imp))
 rownames(pdat) <- NULL
 pdat$var <- factor(pdat$var, levels = pdat$var[order(pdat$imp)])
 
-# Get original anes labels for comparison of varimp
-load("fitted_forest.RData")
-labs <- data.frame(anes = as.character(c("aa_uni_x", "aa_work_x", "abort_bd_x",
-                                         "abort_choice_x", "abort_fatal_x",
-                                         "abort_fin_x", "abort_health_x", 
-                                         "abort_incest_x", "abort_rape_x", 
-                                         "guarpr_self", "envir_drill",  
-                                         "dem_edugroup_x", "fedspend_enviro",
-                                         "fedspend_poor", "fedspend_schools",
-                                         "fedspend_welfare", "gayrt_adopt", 
-                                         "gayrt_marry","gun_control","envir_gwarm", 
-                                         "envir_gwhow", "health_2010hcr_x")),
-                   mturk = as.character(sort(as.character(pdat$var))),
-                   stringsAsFactors = F
-                   )
-# rename anes results
-anes_imp <- grow$importance[names(grow$importance) %in% labs[, 1]]
-for(i in 1:length(anes_imp)) {
-  names(anes_imp)[i] <- labs[labs[, 1] == names(anes_imp)[i], 2]
-}
-
-# Standardize and sort
-range01 <- function(x) (x - min(x)) / (max(x) - min(x))
-
-anes_imp_p <- range01(anes_imp[order(names(anes_imp), decreasing = T)])
-imp_p <- range01(imp[order(names(imp), decreasing = T)])
-
-pdat2 <- data.frame(imp = c(imp_p, anes_imp_p),
-                    var = rep(names(anes_imp), 2),
-                    dset= rep(c("pre_run", "anes"), each = length(imp)))
 
 # Plot importance for prerun data
-p <- ggplot(pdat2, aes(var, imp))
+p <- ggplot(pdat, aes(var, imp))
 p <- p + geom_bar(stat = "identity")
-p <- p + facet_wrap( ~ dset, scales = "fixed") 
 p <- p + scale_y_continuous(breaks = pretty_breaks())
-p <- p + labs(y = "Standardized (0, 1) Mean Increase in MSE after Permutation")
+p <- p + labs(y = "Mean Increase in MSE after Permutation")
 p <- p + theme_bw()
 p <- p + theme(plot.margin = unit(rep(.15, 4), "in"), axis.title.y = element_blank())
 p <- p + coord_flip()
-ggsave(plot = p, filenam = "../figures/varimp.png")
+ggsave(plot = p, filenam = "../figures/main/varimp.png")
 
-# Prediction for group two
+
+# Prediction for both groups
 pred1 <- predict(fit)
 pred2 <- predict(fit, dat[dat$group == 2, ])
-pdat <- data.frame(observed = c(dat$self_eg1[dat$group == 1],
-                                dat$self_eg2[dat$group == 2]),
+pdat <- data.frame(observed = c(dat$self_placement[dat$group == 1],
+                                dat$self_placement[dat$group == 2]),
                    predicted = c(pred1, pred2),
                    group = c(rep("Group 1 (Self first)", length(pred1)),
                              rep("Group 2", length(pred2)))
@@ -117,27 +115,19 @@ pdat <- data.frame(observed = c(dat$self_eg1[dat$group == 1],
 p <- ggplot(pdat, aes(observed, predicted, color = group, shape = group))
 p <- p + geom_point(size = 3) + geom_abline(intercept = 0, slope = 1)
 p <- p + theme_bw() + ylim(0, 100) + xlim(0, 100)
-ggsave(plot = p, filenam = "../figures/prediction.png")
+ggsave(plot = p, filenam = "../figures/main/prediction.png")
 
 
 #===============================================================================
-# How the data will be analyzed
+# Test the hypotheses
 #===============================================================================
-
-## Naive experiment: mean squared distance in treatment and control
-## for self position
-
-# Group one: Naive control group
-mean((dat$self_eg1 - dat$can_eg1_1)^2, na.rm = T)
-mean((dat$self_eg2 - dat$can_eg2_1)^2, na.rm = T)
-
 
 ## Allow for bias in both directions
 
 # Bias in self
-mean((dat[dat$group == 1, "self_eg1"] - pred1)^2)
-mean((dat[dat$group == 2, "self_eg2"] - pred2)^2)
+X <- (dat[dat$group == 1, "self_placement"] - pred1)^2
+Y <- (dat[dat$group == 2, "self_placement"] - pred2)^2
 
 # Bias in candidate
-mean((dat$self_eg1 - dat$can_eg1_1)^2, na.rm = T)
-mean((pred2 - dat$can_eg2_1[dat$group == 2])^2)
+Z <- (dat$self_placement[dat$group == 1] - dat$candidate_placement[dat$group == 1])^2
+W <- (pred2 - dat$candidate_placement[dat$group == 2])^2
