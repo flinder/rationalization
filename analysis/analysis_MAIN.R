@@ -11,7 +11,8 @@ library(ggplot2)
 library(scales)
 library(grid)
 library(dplyr)
-library(rstan) 
+library(rstan)
+library(reshape2)
 
 # Load data
 dat <- read.csv("../data/main_study/main_study_clean.csv", sep = ",")
@@ -237,11 +238,20 @@ generated quantities {
   vector[2] mu;
   real mu_diff;
   real mu_ratio;
+  //matrix[N, 50] y_rep;
+  vector[N] y_rep;
   mu[1] <- alpha[1] / beta[1];
   mu[2] <- alpha[2] / beta[2];
   mu_diff <- mu[1] - mu[2];
   mu_ratio <- mu[1] / mu[2];
-  
+
+  //for (n in 1:N){
+  //  for(j in 1:50) {
+  //    y_rep[n, j] <- gamma_rng(alpha[groupID[n]], beta[groupID[n]]);
+  //  }
+  //}
+  for (n in 1:N)
+    y_rep[n] <- gamma_rng(alpha[groupID[n]], beta[groupID[n]]);
 }
 "
 
@@ -276,46 +286,57 @@ colnames(post_2) <- c("alpha_1", "alpha_2", "beta_1", "beta_2", "mu_1", "mu_2",
 
 # ------------------------------------------------
 # Check Model fit
+B <- 100 # number of replications
+y_rep_full_1 <- extract(stanfit_1, "y_rep")$y_rep
+y_rep_1 <- y_rep_full_1[sample(c(1:nrow(y_rep_full_1)), B), ]
+y_rep_full_2 <- extract(stanfit_2, "y_rep")$y_rep
+y_rep_2 <- y_rep_full_2[sample(c(1:nrow(y_rep_full_2)), B), ]
 
-## Posterior predictive distribution for Z
+# Prepare replications from experiment 1
+groupID_name <- NA
+groupID_name[groupID == 1] <- "Group 1 (S asked first)"
+groupID_name[groupID == 2] <- "Group 2 (P asked first)"
+gdat_1 <- melt(y_rep_1)
+colnames(gdat_1) <- c('iteration', 'observation', 'value')
+gdat_1$experiment <- "Experiment 1: Bias in S"
+gdat_1$groupID <- factor(rep(groupID_name, e = B))
 
-# P Draws from predictive distributions
-P <- 20
-n_x <- length(X)
-n_y <- length(Y)
-n_z <- length(Z)
-n_w <- length(W)
-X_rep <- rgamma(P * n_x, post_1$alpha_1, post_1$beta_1)
-Y_rep <- rgamma(P * n_y, post_1$alpha_2, post_1$beta_2)
-Z_rep <- rgamma(P * n_z, post_2$alpha_1, post_2$beta_1)
-W_rep <- rgamma(P * n_w, post_2$alpha_2, post_2$beta_2)
-rep_lab <- paste0("replication_", c(1:P))
-pdat <- data.frame(draws = c(X, Y, Z, W, X_rep, Y_rep, Z_rep, W_rep),
-                   type = c(rep("observed", (n_x + n_y + n_z + n_w)),
-                            rep(rep_lab, each = n_x), rep(rep_lab, each = n_y),
-                            rep(rep_lab, each = n_z), rep(rep_lab, each = n_w)
-                            ),
-                   experiment = c(rep("Experiment 1: Bias in S", n_x + n_y),
-                                  rep("Experiment 2: Bias in C", n_z + n_w),
-                                  rep("Experiment 1: Bias in S", P * (n_x + n_y)),
-                                  rep("Experiment 2: Bias in C", P * (n_z + n_w))),
-                   group = rep(c("Group 1 (S asked first)", "Group 2 (P asked first)", 
-                                 "Group 1 (S asked first)", "Group 2 (P asked first)",
-                                 "Group 1 (S asked first)", "Group 2 (P asked first)",
-                                 "Group 1 (S asked first)", "Group 2 (P asked first)"), 
-                               c(n_x, n_y, n_z, n_w, P * n_x, P * n_y, P * n_z,
-                                 P * n_w)),
-                   observed = c(rep("observed", (n_x + n_y + n_z + n_w)),
-                                rep("Predicted", P * (n_x + n_y + n_z + n_w)))
-                   )
-p <- ggplot(pdat, aes(x = draws, alpha = type, size = observed, color = observed))
-p <- p + geom_density() + facet_wrap( ~ experiment + group)
-p <- p + theme(panel.background = element_rect(fill = "white", colour = "black"),
-               panel.grid.major = element_line(colour = "gray80"))
-p <- p + scale_size_manual(values=c(1, 0.5))
-p <- p + scale_color_manual(values = c("red", rep("grey20", P)))
-p <- p + scale_alpha_manual(values = c(1, rep(0, P)), guide = FALSE)
-p <- p + labs(x = "Distance", y = "Density")
+# Prepare replications from experiment 2
+gdat_2 <- melt(y_rep_2)
+colnames(gdat_2) <- c('iteration', 'observation', 'value')
+gdat_2$experiment <- "Experiment 2: Bias in P"
+gdat_2$groupID <- factor(rep(groupID_name, e = B))
+
+gdat <- rbind(gdat_1, gdat_2)
+gdat$type <- "replication"
+
+
+observed <- data.frame(iteration = 0,
+                       observation = NA,
+                       value = c(X, Y, Z, W),
+                       experiment = c(rep("Experiment 1: Bias in S", length(y)),
+                                      rep("Experiment 2: Bias in P", length(y))),
+                       groupID = rep(c("Group 1 (S asked first)", 
+                                       "Group 2 (P asked first)"), 
+                                     c(length(X), length(Y)), 2),
+                       type = "observed"
+                       )
+
+pdat <- as.data.frame(rbind(gdat, observed))
+pdat$iteration <- as.factor(pdat$iteration)
+
+# Zoom in
+pdat <- filter(pdat, value < 2000)
+
+p <- ggplot(pdat, aes(x = value, alpha = iteration, color = type, size = type)) + 
+        geom_line(stat = "density") + 
+        scale_alpha_manual(values = c(1, rep(0.15, B)), guide = F) +
+        scale_color_manual(values = c("yellowgreen", rep("cornflowerblue", B))) +
+        scale_size_manual(values = c(1.5, rep(0.5, B))) +
+        facet_wrap( ~ experiment + groupID) + 
+        theme(panel.background = element_rect(fill = "white", colour = "black"),
+              panel.grid.major = element_line(colour = "gray80"))
+p
 ggsave(plot = p, filename = "../figures/main/post_pred.png")
 
 
@@ -327,10 +348,16 @@ pdat <- data.frame(difference = c(post_1$mu_diff, post_1$mu_ratio, post_2$mu_dif
                    experiment = rep(c("Experiment 1: Bias in S", "Experiment 2: Bias in C"), each = 2 * nrow(post_1)),
                    type = rep(rep(c("Difference", "Ratio"), each = nrow(post_1)), 2)
                    )
+pdat$above <- 0
+pdat$above[pdat$type == "Difference" & pdat$difference > 0] <- 1
+pdat$above[pdat$type == "Ratio" & pdat$difference > 1] <- 1
+pdat$above <- as.factor(pdat$above)
 
-p <- ggplot(pdat, aes(x = difference)) + facet_wrap( ~ type + experiment, scales = "free")
-p <- p + geom_histogram(fill = "cornflowerblue", color = "yellowgreen")
+p <- ggplot(pdat, aes(x = difference, fill = above))
+p <- p + facet_wrap( ~ type + experiment, scales = "free")
+p <- p + geom_histogram(color = "yellowgreen")
 p <- p + theme(panel.background = element_rect(fill = "white", colour = "black"),
                panel.grid.major = element_line(colour = "gray80"))
+p <- p + scale_fill_manual(values = c("cornflowerblue", "red"))
 p <- p + labs(x = "Mean Difference/Ratio", y = "")
 ggsave(plot = p, filename = "../figures/main/mean_diff_ratio.png")
