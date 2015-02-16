@@ -48,12 +48,12 @@ mergeNA <- function(x, y) {
   return(x)
 } 
 dat$self_placement <- mergeNA(dat$self_eg1, dat$self_eg2)
-dat$candidate_placement <- mergeNA(mergeNA(dat$can_eg1_1, dat$can_eg1_2),
+dat$party_placement <- mergeNA(mergeNA(dat$can_eg1_1, dat$can_eg1_2),
                                   mergeNA(dat$can_eg2_1, dat$can_eg2_2))
 dat <- dat[, -grep("eg", colnames(dat))]
 
 # select columns for anonymized publishable data set
-out <- select(dat, startDate:comment, tcompl:candidate_placement)
+out <- select(dat, startDate:comment, tcompl:party_placement)
 write.table(out, file = "../data/main_study/main_study_clean.csv", sep = ",",
             row.names = F)
 

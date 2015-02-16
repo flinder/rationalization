@@ -7,7 +7,6 @@ rm(list = ls())
 ################################################################################
 #setwd("~/Dropbox/rationalization/rationalization")
 library(randomForest)
-library(xtable)
 library(ggplot2)
 library(scales)
 library(grid)
@@ -20,6 +19,11 @@ dat <- read.csv("../data/main_study/main_study_clean.csv", sep = ",")
 # Recode climate change question
 dat$gwhow[is.na(dat$gwhow)] <- dat$gwhow2[!is.na(dat$gwhow2)]
 dat$gwhow2 <- NULL 
+
+# Group labels
+dat$group_name <- NA
+dat$group_name[dat$group == 1] <- "Group 1 (S asked first)"
+dat$group_name[dat$group == 2] <- "Group 2 (P asked first)"
 
 #===============================================================================
 # Some descriptive plots
@@ -34,7 +38,8 @@ stats <- c(tapply(dat$age, dat$group, mean),
            tapply(dat$aauni, dat$group, mean),
            tapply(dat$drill, dat$group, mean),
            tapply(dat$hltref, dat$group, mean))
-pdat <- data.frame(val = stats, grp = rep(c("Group 1 (Self first)", "Group 2"), 8), 
+pdat <- data.frame(val = stats, grp = rep(c("Group 1 (S asked first)", 
+                                            "Group 2 (P asked first)"), 8), 
                    var = rep(c("Age", "Education", "Gender", "Survey Time",
                                "gaymarry", "aauni", "drill", "obamacare"), 
                              each = 2)
@@ -72,10 +77,12 @@ dat$pref <- factor(dat$pref, labels = c("democrat", "republican",
 dat$pref2_fac <- NULL
 
 # Plot preferences
-p <- ggplot(dat, aes(dat$pref)) + geom_bar(fill = "cornflowerblue")
+p <- ggplot(dat, aes(x = pref, fill = group_name)) + geom_bar(position = "dodge")
 p <- p + labs(x = "Preferred Party")
 p <- p + theme(panel.background = element_rect(fill = "white", colour = "black"),
                panel.grid.major = element_line(colour = "gray80"))
+p <- p + scale_fill_manual(values = c("cornflowerblue", "yellowgreen"), 
+                                      name = "Experimental Group")
 ggsave(plot = p, filename = "../figures/main/preferences.png")
 
 # Exclude observations without party preference
@@ -121,8 +128,8 @@ ggsave(plot = p, filename = "../figures/main/varimp.png")
 # Prediction for both groups
 pdat <- data.frame(observed = dat$self_placement,
                    predicted = dat$pred,
-                   candidat = dat$candidate_placement,
-                   group = as.factor(dat$group)
+                   candidat = dat$party_placement,
+                   group = dat$group_name
                    )
 p <- ggplot(pdat, aes(observed, predicted, color = group))
 p <- p + geom_point() + geom_abline(intercept = 0, slope = 1)
@@ -135,8 +142,8 @@ ggsave(plot = p, filename = "../figures/main/prediction.png")
 
 
 
-# Look at distribution of self and candidate placements
-p <- ggplot(dat, aes(x = self_placement, color = as.factor(group)))
+# Look at distribution of self and party placements
+p <- ggplot(dat, aes(x = self_placement, color = group_name))
 p <- p + scale_color_manual(values = c("cornflowerblue", "yellowgreen"), name = "Experimental Group")
 p <- p + geom_density(alpha = .3, size = 1)
 p <- p + facet_wrap( ~ pref)
@@ -145,7 +152,7 @@ p <- p + theme(panel.background = element_rect(fill = "white", colour = "black")
 p <- p + labs(x = "Self Placement", y = "Density")
 ggsave(plot = p, filename = "../figures/main/dist_self.png")
 
-p <- ggplot(dat, aes(x = candidate_placement, color = as.factor(group)))
+p <- ggplot(dat, aes(x = party_placement, color = group_name))
 p <- p + scale_color_manual(values = c("cornflowerblue", "yellowgreen"), name = "Experimental Group")
 p <- p + facet_wrap( ~ pref)
 p <- p + geom_density(alpha = .3, size = 1)
@@ -164,16 +171,16 @@ X <- (dat[dat$group == 1, "self_placement"] - dat$pred[dat$group == 1])^2
 Y <- (dat[dat$group == 2, "self_placement"] - dat$pred[dat$group == 2])^2
 #t.test(log(X), log(Y))
 
-# Bias in candidate
-Z <- (dat$self_placement[dat$group == 1] - dat$candidate_placement[dat$group == 1])^2
-W <- (dat$pred[dat$group == 2] - dat$candidate_placement[dat$group == 2])^2
-epsilon <- 1e-2
+# Bias in party
+Z <- (dat$self_placement[dat$group == 1] - dat$party_placement[dat$group == 1])^2
+W <- (dat$pred[dat$group == 2] - dat$party_placement[dat$group == 2])^2
+#epsilon <- 1e-2
 #t.test(log(Z + epsilon), log(W + epsilon))
 
 # Visualize distribution of differences
 df <- data.frame(distance = c(X, Y, Z, W),
-                 group = rep(c(rep("Group 1 (S first)", length(X)), 
-                               rep("Group 2", length(Y))), 2),
+                 group = rep(c(rep("Group 1 (S asked first)", length(X)), 
+                               rep("Group 2 (P asked first)", length(Y))), 2),
                  experiment = c(rep("Experiment: Bias in Self", length(c(X, Y))), 
                                 rep("Experiment: Bias in Party", length(c(Z, W))))
                  )
@@ -292,10 +299,10 @@ pdat <- data.frame(draws = c(X, Y, Z, W, X_rep, Y_rep, Z_rep, W_rep),
                                   rep("Experiment 2: Bias in C", n_z + n_w),
                                   rep("Experiment 1: Bias in S", P * (n_x + n_y)),
                                   rep("Experiment 2: Bias in C", P * (n_z + n_w))),
-                   group = rep(c("Group 1 (S first)", "Group 2", 
-                                 "Group 1 (S first)", "Group 2",
-                                 "Group 1 (S first)", "Group 2",
-                                 "Group 1 (S first)", "Group 2"), 
+                   group = rep(c("Group 1 (S asked first)", "Group 2 (P asked first)", 
+                                 "Group 1 (S asked first)", "Group 2 (P asked first)",
+                                 "Group 1 (S asked first)", "Group 2 (P asked first)",
+                                 "Group 1 (S asked first)", "Group 2 (P asked first)"), 
                                c(n_x, n_y, n_z, n_w, P * n_x, P * n_y, P * n_z,
                                  P * n_w)),
                    observed = c(rep("observed", (n_x + n_y + n_z + n_w)),
