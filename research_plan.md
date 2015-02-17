@@ -214,8 +214,7 @@ workers are redirected to a Qualtrics survey to complete the experiment. The spe
 
 ### Pre Run
 
-In preparation for the main data collection, I conducted a test run of
-the experiment with 50 participants. Mostly to test the procedures to connect Qualtrics and MTurk. Figures \ref{fig:bal} to ref{fig:prediction} show some description of the data obtained from this pre run of the experiment. However, the sample was very small so the results from the predicitve model are not very reliable (the random forest has been fit to the 24 observations in group one. Group 2 has been left out since the self position is expected to be biased in this group).
+ Figures \ref{fig:bal} to ref{fig:prediction} show some description of the data obtained from this pre run of the experiment. However, the sample was very small so the results from the predicitve model are not very reliable (the random forest has been fit to the 24 observations in group one. Group 2 has been left out since the self position is expected to be biased in this group).
 
 ![Balance statistics for a sample of variables from pre run of the experiment.\label{fig:bal}](figures/bal.png)
 

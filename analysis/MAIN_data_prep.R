@@ -5,6 +5,8 @@ rm(list=ls())
 #===============================================================================
 
 library(dplyr)
+library(sp)
+library(rworldmap)
 
 qualt <- read.csv("../data/main_study/rationalization_main.csv", 
                       header = T)
@@ -52,14 +54,33 @@ dat$party_placement <- mergeNA(mergeNA(dat$can_eg1_1, dat$can_eg1_2),
                                   mergeNA(dat$can_eg2_1, dat$can_eg2_2))
 dat <- dat[, -grep("eg", colnames(dat))]
 
-# select columns for anonymized publishable data set
-out <- select(dat, startDate:comment, tcompl:party_placement)
-write.table(out, file = "../data/main_study/main_study_clean.csv", sep = ",",
-            row.names = F)
-
 # geo locations for map, shuffle randomly for anonymization
 geo_loc <- select(dat, locLa:locLo)
 geo_loc$rand <- runif(nrow(geo_loc))
 geo_loc <- geo_loc[order(geo_loc$rand), -3]
 write.table(geo_loc, file = "../data/main_study/main_study_geo_loc.csv", sep = ",",
             row.names = F)
+
+# Drop respondents with IP adress outside of USA
+
+# The single argument to this function, points, is a data.frame in which:
+#   - column 1 contains the longitude in degrees
+#   - column 2 contains the latitude in degrees
+coords2country = function(points) {  
+  countriesSP <- getMap(resolution='low')
+  pointsSP = SpatialPoints(points, proj4string=CRS(proj4string(countriesSP)))  
+  indices = over(pointsSP, countriesSP)
+  indices$ADMIN  
+}
+
+loc <- data.frame(long = geo_loc[, 2], lat = geo_loc[, 1])
+dat$country <- coords2country(loc)
+
+dat <- dat[!is.na(dat$country), ]
+dat <- dat[dat$country == "United States of America", ]
+
+# select columns for anonymized publishable data set
+out <- select(dat, startDate:comment, tcompl:party_placement)
+write.table(out, file = "../data/main_study/main_study_clean.csv", sep = ",",
+            row.names = F)
+

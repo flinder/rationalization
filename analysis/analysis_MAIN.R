@@ -5,7 +5,6 @@ rm(list = ls())
 #
 # Input: main_study_clean.csv (cleaned qualtrix data output)
 ################################################################################
-#setwd("~/Dropbox/rationalization/rationalization")
 library(randomForest)
 library(ggplot2)
 library(scales)
@@ -13,6 +12,11 @@ library(grid)
 library(dplyr)
 library(rstan)
 library(reshape2)
+library(xtable)
+
+#
+panderOptions('table.alignment.default',
+              function(df) ifelse(sapply(df, is.numeric), 'right', 'left'))
 
 # Load data
 dat <- read.csv("../data/main_study/main_study_clean.csv", sep = ",")
@@ -139,6 +143,7 @@ p <- p + scale_color_manual(values = c("cornflowerblue", "yellowgreen"),
                             name = "Experimental Group")
 p <- p + theme(panel.background = element_rect(fill = "white", colour = "black"),
                panel.grid.major = element_line(colour = "gray80"))
+p <- p + stat_smooth(size = 1, se = F)
 ggsave(plot = p, filename = "../figures/main/prediction.png")
 
 
@@ -167,28 +172,35 @@ ggsave(plot = p, filename = "../figures/main/dist_party.png")
 # Main Analysis
 #===============================================================================
 
-# Bias in self
-X <- (dat[dat$group == 1, "self_placement"] - dat$pred[dat$group == 1])^2
-Y <- (dat[dat$group == 2, "self_placement"] - dat$pred[dat$group == 2])^2
-#t.test(log(X), log(Y))
+## Bias in self
+#X <- (dat[dat$group == 1, "self_placement"] - dat$pred[dat$group == 1])^2
+#Y <- (dat[dat$group == 2, "self_placement"] - dat$pred[dat$group == 2])^2
+
+# Bias in Self: Deviations towards preferred party
+s_dist <- cbind(dat$party_placement, dat$self_placement)
+# normalize to have S* = 0 for all i
+s_dist_norm <- s_dist - dat$pred
+dat$signed_s_dist <- s_dist_norm[, 1] * sign(s_dist_norm[, 2])
+
+X <- dat$signed_s_dist[dat$group == 1]
+Y <- dat$signed_s_dist[dat$group == 2]
 
 # Bias in party
 Z <- (dat$self_placement[dat$group == 1] - dat$party_placement[dat$group == 1])^2
+Z1 <- (dat$pred[dat$group == 1] - dat$party_placement[dat$group == 1])^2
 W <- (dat$pred[dat$group == 2] - dat$party_placement[dat$group == 2])^2
-#epsilon <- 1e-2
-#t.test(log(Z + epsilon), log(W + epsilon))
 
 # Visualize distribution of differences
 df <- data.frame(distance = c(X, Y, Z, W),
                  group = rep(c(rep("Group 1 (S asked first)", length(X)), 
                                rep("Group 2 (P asked first)", length(Y))), 2),
-                 experiment = c(rep("Experiment: Bias in Self", length(c(X, Y))), 
-                                rep("Experiment: Bias in Party", length(c(Z, W))))
+                 experiment = c(rep("Experiment 1: Bias in Self", length(c(X, Y))), 
+                                rep("Experiment 2: Bias in Party", length(c(Z, W))))
                  )
 
 p <- ggplot(df, aes(distance, color = group))
 p <- p + geom_density(size = 1)
-p <- p + facet_wrap( ~ experiment, scales = "fixed")
+p <- p + facet_wrap( ~ experiment, scales = "free")
 p <- p + scale_color_manual(values = c("cornflowerblue", "yellowgreen"), name = "Experimental Group")
 p <- p + theme(panel.background = element_rect(fill = "white", colour = "black"),
                panel.grid.major = element_line(colour = "gray80"))
@@ -197,8 +209,8 @@ ggsave(plot = p, filename = "../figures/main/dist_dista_dens.png")
 
 p <- ggplot(df, aes(x = group, y = distance, color = group))
 p <- p + geom_boxplot(color = "grey10", outlier.size = 0.1)
-p <- p + geom_point(alpha = 0.5, position = "jitter")
-p <- p + facet_wrap( ~ experiment, scales = "fixed")
+p <- p + geom_point(alpha = 0.8, position = "jitter")
+p <- p + facet_wrap( ~ experiment, scales = "free")
 p <- p + scale_color_manual(values = c("cornflowerblue", "yellowgreen"), guide = F)
 p <- p + theme(panel.background = element_rect(fill = "white", colour = "black"),
                panel.grid.major = element_line(colour = "gray80"))
@@ -211,7 +223,7 @@ ggsave(plot = p, filename = "../figures/main/dist_dista_box.png")
 #===============================================================================
 
 # First: just estimate the parameters
-model <- "
+model_gamma <- "
 data {
   int<lower=1> N;
   vector[N] y;
@@ -255,8 +267,57 @@ generated quantities {
 }
 "
 
-# Compile model
-c_mod <- stan_model(model_code = model)
+model_t = "
+  data {
+    int<lower=1> N;
+    vector[N] y;
+    int<lower=1> groupID[N];
+  }
+  transformed data{
+    real meany;                                   // mean of y; see mu prior
+    meany <- mean(y); 
+  }
+  parameters {
+    vector[2] mu;                                 // estimated group means and sd
+    vector<lower=0>[2] sigma;                     // Kruschke puts upper bound as well; ignored here
+    real<lower=0, upper=100> nu;                  // df for t distribution
+  }
+  model {
+    // priors
+    mu ~ normal(0, 100);                       // note that there is a faster implementation of this for stan; sd here is more informative than in Kruschke paper
+    sigma ~ cauchy(0, 5);
+    nu ~ exponential(1.0/29);                     // Based on Kruschke; makes mean nu 29 (might consider upper bound, too large and might as well switch to normal)
+  
+  
+    // likelihood
+    for (n in 1:N){
+      y[n] ~ student_t(nu, mu[groupID[n]], sigma[groupID[n]]);
+  
+    }
+  }
+  generated quantities {
+    vector[N] y_rep;                               // posterior predictive distribution
+    real mu_diff;
+    real mu_ratio;
+    mu_diff <- mu[1] - mu[2];
+    mu_ratio <- mu[1] / mu[2];
+
+    for (n in 1:N){
+      y_rep[n] <- student_t_rng(nu, mu[groupID[n]], sigma[groupID[n]]);
+    }
+    
+    
+  }
+"
+
+
+## Compile models
+#c_mod_gamma <- stan_model(model_code = model_gamma)
+#save(c_mod_gamma, file = "c_mod_gamma.RData")
+#c_mod_t <- stan_model(model_code = model_t)
+#save(c_mod_t, file = "c_mod_t.RData")
+load("c_mod_gamma.RData")
+load("c_mod_t.RData")
 
 # ---------------------------------------------------
 # Compare Bias in self (x and Y)
@@ -266,10 +327,13 @@ groupID = c(rep(1, length(X)), rep(2,  length(Y)))
 standata_1 <- list(N = length(y), groupID = groupID, y = y)
 
 # Sample from it
-stanfit_1 <- sampling(object = c_mod, data = standata_1, iter = 5000, warmup = 1000, chains = 2)
-post_1 <- as.data.frame(do.call(cbind, extract(stanfit_1, pars = c("alpha", "beta", "mu", "mu_diff", "mu_ratio"))))
-colnames(post_1) <- c("alpha_1", "alpha_2", "beta_1", "beta_2", "mu_1", "mu_2",
-                      "mu_diff", "mu_ratio")
+stanfit_1 <- sampling(object = c_mod_t, data = standata_1, iter = 5000, 
+                      warmup = 1000, chains = 2)
+post_1 <- as.data.frame(do.call(cbind, extract(stanfit_1, pars = c("mu", "sigma",
+                                                                   "nu", "mu_diff", 
+                                                                   "mu_ratio"))))
+colnames(post_1) <- c("mu_1", "mu_2", "sigma_1", "sigma_2", "nu", "mu_diff", 
+                      "mu_ratio")
 
 # ---------------------------------------------------
 # Compare Bias in party
@@ -279,13 +343,18 @@ groupID = c(rep(1, length(X)), rep(2,  length(Y)))
 standata_2 <- list(N = length(y), groupID = groupID, y = y)
 
 # Sample from it
-stanfit_2 <- sampling(object = c_mod, data = standata_2, iter = 5000, warmup = 1000, chains = 2)
-post_2 <- as.data.frame(do.call(cbind, extract(stanfit_2, pars = c("alpha", "beta", "mu", "mu_diff", "mu_ratio"))))
+stanfit_2 <- sampling(object = c_mod_gamma, data = standata_2, iter = 5000, 
+                      warmup = 1000, chains = 2)
+post_2 <- as.data.frame(do.call(cbind, extract(stanfit_2, pars = c("alpha",
+                                                                   "beta", "mu", 
+                                                                   "mu_diff", 
+                                                                   "mu_ratio"))))
 colnames(post_2) <- c("alpha_1", "alpha_2", "beta_1", "beta_2", "mu_1", "mu_2",
                       "mu_diff", "mu_ratio")
 
 # ------------------------------------------------
 # Check Model fit
+
 B <- 100 # number of replications
 y_rep_full_1 <- extract(stanfit_1, "y_rep")$y_rep
 y_rep_1 <- y_rep_full_1[sample(c(1:nrow(y_rep_full_1)), B), ]
@@ -323,34 +392,57 @@ observed <- data.frame(iteration = 0,
                        )
 
 pdat <- as.data.frame(rbind(gdat, observed))
-pdat$iteration <- as.factor(pdat$iteration)
+lvl <- rev(as.character(sort(unique(pdat$iteration))))
+pdat$iteration <- factor(pdat$iteration, levels = lvl)
+
+
 
 # Zoom in
 pdat <- filter(pdat, value < 2000)
 
 p <- ggplot(pdat, aes(x = value, alpha = iteration, color = type, size = type)) + 
         geom_line(stat = "density") + 
-        scale_alpha_manual(values = c(1, rep(0.15, B)), guide = F) +
-        scale_color_manual(values = c("yellowgreen", rep("cornflowerblue", B))) +
-        scale_size_manual(values = c(1.5, rep(0.5, B))) +
-        facet_wrap( ~ experiment + groupID) + 
+        scale_alpha_manual(values = c(rep(0.2, B), 1), guide = F) +
+        scale_color_manual(values = c("orangered1", rep("cornflowerblue", B)), name = "") +
+        scale_size_manual(values = c(1, rep(0.5, B)), name = "") +
+        facet_wrap( ~ experiment + groupID, scales = "free") + 
         theme(panel.background = element_rect(fill = "white", colour = "black"),
               panel.grid.major = element_line(colour = "gray80"))
-p
 ggsave(plot = p, filename = "../figures/main/post_pred.png")
 
 
 # ------------------------------------------------
 # Visualize results
 
+
+## Tables of results
+
+# Experiment 1
+res_1 <- data.frame(Mean = apply(post_1, 2, mean),
+                    "Quantile_0.025" = apply(post_1, 2, quantile, 0.025),
+                    "Quantile_0.975" = apply(post_1, 2, quantile, 0.975),
+                    "Std.Error" = apply(post_1, 2, function(x) sqrt(var(x))))
+# Experiment 2
+res_2 <- data.frame(Mean = apply(post_2, 2, mean),
+                    "Quantile_0.025" = apply(post_2, 2, quantile, 0.025),
+                    "Quantile_0.975" = apply(post_2, 2, quantile, 0.975),
+                    "Std.Error" = apply(post_2, 2, function(x) sqrt(var(x))))
+
+pandoc.table(res_1, digits = 3, split.tables = Inf, 
+             caption = "Summary results for experiment 1", 
+             emphasize.rownames = FALSE)
+pandoc.table(res_2, digits = 3, split.tables = Inf,
+             caption = "Summary results for experiment 2", 
+             emphasize.rownames = FALSE)
+
 # POsterior distribution of ratio and difference in means
 pdat <- data.frame(difference = c(post_1$mu_diff, post_1$mu_ratio, post_2$mu_diff, post_2$mu_ratio),
                    experiment = rep(c("Experiment 1: Bias in S", "Experiment 2: Bias in C"), each = 2 * nrow(post_1)),
                    type = rep(rep(c("Difference", "Ratio"), each = nrow(post_1)), 2)
                    )
-pdat$above <- 0
-pdat$above[pdat$type == "Difference" & pdat$difference > 0] <- 1
-pdat$above[pdat$type == "Ratio" & pdat$difference > 1] <- 1
+pdat$above <- "Probability Mass in Favor \nof the Hypothesis"
+pdat$above[pdat$type == "Difference" & pdat$difference > 0] <- "Probability Mass Against \nthe Hypothesis"
+pdat$above[pdat$type == "Ratio" & pdat$difference > 1] <- "Probability Mass Against \nthe Hypothesis"
 pdat$above <- as.factor(pdat$above)
 
 p <- ggplot(pdat, aes(x = difference, fill = above))
@@ -358,6 +450,6 @@ p <- p + facet_wrap( ~ type + experiment, scales = "free")
 p <- p + geom_histogram(color = "yellowgreen")
 p <- p + theme(panel.background = element_rect(fill = "white", colour = "black"),
                panel.grid.major = element_line(colour = "gray80"))
-p <- p + scale_fill_manual(values = c("cornflowerblue", "red"))
+p <- p + scale_fill_manual(values = c("red", "cornflowerblue"))
 p <- p + labs(x = "Mean Difference/Ratio", y = "")
 ggsave(plot = p, filename = "../figures/main/mean_diff_ratio.png")
