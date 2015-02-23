@@ -52,8 +52,7 @@ process of rationalization occurs.
 
 I define the individual’s true position ($S_i$) as the position that respondent $i$ would report when asked to place only herself on the ideological dimension and the party's true position ($P_i$; as perceived by respondent $i$) as the position the respondent would assign if asked to rate only the party. I denote the reported positions as $\hat{S}_i$ and $\hat{P}_i$ for individual and party positions respectively. Figure \ref{fig:DGP} displays graphically the two scenarios how convergence bias can occur. If the question for $S$ is asked first and the question for $P$ is asked second, $\hat{S}$ should equal $S$ (on average) and $\hat{P}$ should be closer to $S$ than $P$. 
 
-![Illustration of the proposed Data Generating Mechanism: S 'True' self position, C 'True' perceived candidate position, ^ S reported self position, ^ C reported candidate position.
-In red the convergence bias.\label{fig:DGP}](../figures/research_design_figure.png)
+\input{research_design_figure.tex}
 
 If the order of the question is reversed, $\hat{P}$ should equal $P$ and $\hat{S}$ should be biased towards $P$. In other words, depending on what question they are asked first, I expect that subjects bias their second answer in order to decrease the distance between themselves and the preferred party. Each experiment is designed to estimate one of these two forms of convergence bias. In the following sections I will describe the two experiments in more detail. 
 
@@ -64,9 +63,9 @@ To avoid this problem, I will estimate the unbiased $\hat{S}$ in the treatment g
 
 With this estimate of the true $S$, the treatment effect can be estimated by comparing the average distance between the prediction and the reported position in the treatment and control group. Since I'm only interested differences in direction of the preferred party's position $P$, the outcome of interest is the distance between $\hat{S}$ and $S^*$ in direction of $P$:
 
-$$ D(S^*_i,\hat{S}_i, \hat{P}_i) = (\hat{S}_i - S^*_i) sng(\hat{P}_i - S^*_i). $$
+$$ D(S^*_i,\hat{S}_i, \hat{P}_i) = (\hat{S}_i - S^*_i) \operatorname{sgn}(\hat{P}_i - S^*_i). $$
 
-Where $sng(.)$ is the sign function.  I define the treatment effect as:
+Where $\operatorname{sgn}(.)$ is the sign function.  I define the treatment effect as:
 
 $$ T_1 = \frac{\bar{X}}{\bar{Y}}. $$
 
