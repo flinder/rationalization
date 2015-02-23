@@ -99,8 +99,6 @@ abrthlth What do you think about abortion being legal if staying pregnant would 
 * Oppose (2)
 * Neither favor nor oppose (3)
 
-
-
 t_abrtinc Timing
     First Click (1)
     Last Click (2)
@@ -111,8 +109,6 @@ abrtinc What do you think about abortion being legal if the pregnancy was caused
 * Favor (1)
 * Oppose (2)
 * Neither favor nor oppose (3)
-
-
 
 t_abrtbd Timing
     First Click (1)
@@ -137,8 +133,6 @@ fedwlf Should federal spending on welfare programs be increased, decreased or ke
 * Increased (1)
 * Kept the same (2)
 * Decreased (3)
-
-
 
 t_abrtfin Timing
     First Click (1)
@@ -183,8 +177,6 @@ abrtrpe What do you think about abortion being legal if the pregnancy was cause
 * Oppose (2)
 * Neither favor nor oppose (3)
 
-
-
 t_fedpoor Timing
     First Click (1)
     Last Click (2)
@@ -196,8 +188,6 @@ fedpoor Should federal spending on aid to the poor be increased, decreased or ke
 * Kept the same (2)
 * Decreased (3)
 
-
-
 t_fedenv Timing
     First Click (1)
     Last Click (2)
@@ -208,8 +198,6 @@ fedenv Should federal spending on protecting the environment be increased, decre
 * Increased (1)
 * Kept the same (2)
 * Decreased (3)
-
-
 
 t_fedschoo Timing
     First Click (1)
@@ -235,8 +223,6 @@ abrtdth What do you think about abortion being legal if staying pregnant could 
 * Oppose (2)
 * Neither favor nor oppose (3)
 
-
-
 t_drill Timing
     First Click (1)
     Last Click (2)
@@ -248,8 +234,6 @@ drill Do you favor, oppose or neither favor nor oppose increased offshore drilli
 * Oppose (2)
 * Neither Favor nor Oppose (3)
 
-
-
 t_gwhap Timing
     First Click (1)
     Last Click (2)
@@ -259,8 +243,6 @@ t_gwhap Timing
 gwhap You may have heard about the idea that the world's temperature may have been going up slowly over the past 100 years. What is your personal opinion on this? Do you think this has probably been happening, or do you think it probably hasn't been happening?
 * Has probably been happening (1)
 * Probably hasn't been happening (2)
-
-
 
 t_gwhow Timing
     First Click (1)
@@ -274,8 +256,6 @@ gwhow Who do you think a rise in the world's temperatures would be caused by?
 * Mostly natural causes (2)
 * About equally by human activity and by natural causes (3)
 
-
-
 t_gwhow2 Timing
     First Click (1)
     Last Click (2)
@@ -288,8 +268,6 @@ gwhow2 Assuming it's happening, who do you think a rise in the world's temperatu
 * Mostly natural causes (2)
 * About equally by human activity and by natural causes (3)
 
-
-
 t_aauni Timing
     First Click (1)
     Last Click (2)
@@ -301,8 +279,6 @@ aauni Do you favor, oppose, or neither favor nor oppose allowing universities to
 * Oppose (2)
 * Neither favor nor oppose (3)
 
-
-
 t_aawork Timing
     First Click (1)
     Last Click (2)
@@ -313,8 +289,6 @@ aawork Do you favor, oppose, or neither favor nor oppose allowing companies to i
 * Favor (1)
 * Oppose (2)
 * Neither favor nor oppose (3)
-
-
 
 t_gun Timing
     First Click (1)

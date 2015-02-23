@@ -16,6 +16,10 @@ library(xtable)
 
 # Load data
 dat <- read.csv("../data/main_study/main_study_clean.csv", sep = ",")
+  
+#===============================================================================
+# Some more data preparation
+#===============================================================================
 
 # Recode climate change question
 dat$gwhow[is.na(dat$gwhow)] <- dat$gwhow2[!is.na(dat$gwhow2)]
@@ -25,51 +29,6 @@ dat$gwhow2 <- NULL
 dat$group_name <- NA
 dat$group_name[dat$group == 1] <- "Group 1 (S asked first)"
 dat$group_name[dat$group == 2] <- "Group 2 (P asked first)"
-
-#===============================================================================
-# Some descriptive plots
-#===============================================================================
-
-# Balance Statistics
-stats <- c(tapply(dat$age, dat$group, mean),
-           tapply(dat$edu, dat$group, mean),
-           tapply(dat$sex, dat$group, mean),
-           tapply(dat$tcompl, dat$group, mean),
-           tapply(dat$gaymarry, dat$group, mean),
-           tapply(dat$aauni, dat$group, mean),
-           tapply(dat$drill, dat$group, mean),
-           tapply(dat$hltref, dat$group, mean))
-pdat <- data.frame(val = stats, grp = rep(c("Group 1 (S asked first)", 
-                                            "Group 2 (P asked first)"), 8), 
-                   var = rep(c("Age", "Education", "Gender", "Survey Time",
-                               "gaymarry", "aauni", "drill", "obamacare"), 
-                             each = 2)
-)
-
-# Common plotting elements
-THEME <- theme(panel.background = element_rect(fill = "white", colour = "black"),
-               panel.grid.major = element_line(colour = "gray80"),
-               axis.text=element_text(size=12),
-               axis.title=element_text(size=14),
-               legend.text=element_text(size=12),
-               legend.title=element_text(size=14))
-FILL  <- scale_fill_manual(values = c("cornflowerblue", "yellowgreen"), 
-                           name = "Experimental Group")
-COLOR <- scale_color_manual(values = c("cornflowerblue", "yellowgreen"), 
-                            name = "Experimental Group")
-
-p <- ggplot(pdat, aes(var, val, fill = grp)) + FILL + THEME + 
-      geom_bar(position = "dodge", stat = "identity") + 
-      labs(y = "Unit of Variable", x = "")
-ggsave(plot = p, filename = "../figures/main/bal_main.png")
-
-
-# Time to complete survey
-p <- ggplot(dat, aes(tcompl)) + THEME + geom_density() + 
-      geom_histogram(aes(y = ..density..), colour = "yellowgreen", 
-                     fill = "cornflowerblue", alpha = 0.8, binwidth = 1) + 
-      labs(x = "Time in Minutes", y = "Density")
-ggsave(plot = p, filename = "../figures/main/time.png")
 
 # Deal with other pref = other party
 dat$pref2[dat$pref2 == ""] <- NA
@@ -83,11 +42,61 @@ dat$pref <- factor(dat$pref, labels = c("democrat", "republican",
                                         "independent", "green", "libertarian"),
                    levels = c(1:5))
 dat$pref2_fac <- NULL
+dat$pref2 <- NULL
+#===============================================================================
+# Descriptive plots
+#===============================================================================
+
+# Common plotting elements
+THEME <- theme(panel.background = element_rect(fill = "white", colour = "black"),
+               panel.grid.major = element_line(colour = "gray80"),
+               axis.text=element_text(size=12),
+               axis.title=element_text(size=14),
+               legend.text=element_text(size=12),
+               legend.title=element_text(size=14))
+FILL  <- scale_fill_manual(values = c("cornflowerblue", "yellowgreen"), 
+                           name = "Experimental Group")
+COLOR <- scale_color_manual(values = c("cornflowerblue", "yellowgreen"), 
+                            name = "Experimental Group")
+WIDTH <- 6
+HEIGHT <- 5
+
+## Balance statistics 
+
+
+# Choice questions
+df <- select(dat, -(startDate:require), -contains("attchk"), -contains("t_"),
+             -contains("placement"), -group, -comment, -age, -tcompl, -comm)
+df$pref <- as.integer(df$pref)
+
+
+df1 <- melt(df)
+df1$value <- factor(df1$value)
+df1$group_name <- factor(df1$group_name)
+df1$variable <- factor(df1$variable, levels = sort(levels(df1$variable)))
+df1 <- filter(df1, value != -99)
+df1$group_name <- as.factor(gsub(" \\(.+\\)", "", as.character(df1$group_name)))
+
+p <- ggplot(df1) + 
+      geom_bar(aes(x = group_name, fill = value)) + 
+      facet_wrap( ~ variable) + 
+      scale_fill_manual(values = c("cornflowerblue", "yellowgreen", "orange", "skyblue", "grey30")) +
+      THEME + theme(axis.text.x = element_text(angle = 20, hjust = 1))
+ggsave(plot = p, filename = "../figures/main/bal.png")
+
+# Time to complete survey
+p <- ggplot(dat, aes(tcompl)) + THEME + geom_density() + 
+      geom_histogram(aes(y = ..density..), colour = "yellowgreen", 
+                     fill = "cornflowerblue", alpha = 0.8, binwidth = 1) + 
+      labs(x = "Time in Minutes", y = "Density")
+ggsave(plot = p, filename = "../figures/main/time.png", width = 1.5 * WIDTH, 
+       height = HEIGHT)
 
 # Plot preferences
 p <- ggplot(dat, aes(x = pref, fill = group_name)) + THEME + FILL + 
       geom_bar(position = "dodge") + labs(x = "Preferred Party", y = "Count")
-ggsave(plot = p, filename = "../figures/main/preferences.png")
+ggsave(plot = p, filename = "../figures/main/preferences.png", width = 2 * WIDTH, 
+       height = HEIGHT)
 
 # Exclude observations without party preference
 dat <- dat[!is.na(dat$pref), ]
@@ -102,29 +111,14 @@ vars_to_recode <- c("hltref", "gaymarry", "gayadopt", "abrtch", "abrthlth", "abr
 for(var in vars_to_recode)
   dat[, var] <- as.factor(dat[, var])
 
-
 mod <- self_placement ~ hltref + gaymarry + gayadopt + abrtch + abrthlth + abrtinc + 
   abrtbd + abrtrpe + abrtdth + abrtfin + fedenv + fedwlf + fedpoor + fedschool + 
   drill + gwhap + gwhow + aauni + aawork + gun + comm + edu
-fit <- randomForest(mod, data = dat[dat$group == 1, ],  importance = T)
-
-imp <- sort(fit$importance[, 1], decreasing = T)
-pdat <- data.frame(imp = imp, var = names(imp))
-rownames(pdat) <- NULL
-pdat$var <- factor(pdat$var, levels = pdat$var[order(pdat$imp)])
+fit <- randomForest(mod, data = dat[dat$group == 1, ],  importance = T, keep.inbag = TRUE)
 
 # put predictions into data.frame
 dat$pred[dat$group == 1] <- predict(fit)
 dat$pred[dat$group == 2] <- predict(fit, dat[dat$group == 2, ])
-
-# Plot importance
-p <- ggplot(pdat, aes(var, imp)) + THEME + 
-      geom_bar(stat = "identity", fill = "cornflowerblue") +
-      labs(y = "Mean Increase in MSE after Permutation") +
-      theme(plot.margin = unit(rep(.15, 4), "in"), axis.title.y = element_blank()) + 
-      coord_flip()
-ggsave(plot = p, filename = "../figures/main/varimp.png")
-
 
 # Prediction for both groups
 pdat <- data.frame(observed = dat$self_placement,
@@ -137,9 +131,8 @@ p <- ggplot(pdat, aes(observed, predicted, color = group)) + THEME + COLOR +
         ylim(0, 100) + xlim(0, 100) + 
         stat_smooth(size = 1, se = F) + 
         labs(y = "Predicted S", x = "Observed S")
-ggsave(plot = p, filename = "../figures/main/prediction.png")
-
-
+ggsave(plot = p, filename = "../figures/main/prediction.png", width = 1.3 * WIDTH,
+       height = HEIGHT)
 
 # Look at distribution of self and party placements
 p <- ggplot(dat, aes(x = self_placement, color = group_name)) + THEME + 
@@ -148,14 +141,15 @@ p <- ggplot(dat, aes(x = self_placement, color = group_name)) + THEME +
       geom_density(alpha = .3, size = 1) + 
       facet_wrap( ~ pref) +
       labs(x = "Self Placement", y = "Density")
-ggsave(plot = p, filename = "../figures/main/dist_self.png")
+ggsave(plot = p, filename = "../figures/main/dist_self.png", width = 2 * WIDTH,
+       height = 1.5 * HEIGHT)
 
 p <- ggplot(dat, aes(x = party_placement, color = group_name)) + THEME + COLOR + 
       facet_wrap( ~ pref) + 
       geom_density(alpha = .3, size = 1) + 
       labs(x = "Party Placement", y = "Density")
-ggsave(plot = p, filename = "../figures/main/dist_party.png")
-
+ggsave(plot = p, filename = "../figures/main/dist_party.png", width = 2 * WIDTH,
+       height = 1.5 * HEIGHT)
 
 #===============================================================================
 # Main Analysis
@@ -191,7 +185,8 @@ p <- ggplot(df, aes(distance, color = group)) + THEME + COLOR +
       geom_density(size = 1) +
       facet_wrap( ~ experiment, scales = "free") +
       labs(x = "Distance", y = "Density")
-ggsave(plot = p, filename = "../figures/main/dist_dista_dens.png")
+ggsave(plot = p, filename = "../figures/main/dist_dista_dens.png", width = 2 * WIDTH, 
+       height = HEIGHT)
 
 p <- ggplot(df, aes(x = group, y = distance, color = group)) + THEME + 
       geom_boxplot(color = "grey10", outlier.size = 0.1) + 
@@ -200,7 +195,8 @@ p <- ggplot(df, aes(x = group, y = distance, color = group)) + THEME +
       scale_color_manual(values = c("cornflowerblue", "yellowgreen"), 
                           guide = F) + 
       labs(x = "Experimental Group", y = "Distance")
-ggsave(plot = p, filename = "../figures/main/dist_dista_box.png")
+ggsave(plot = p, filename = "../figures/main/dist_dista_box.png", width = 2 * WIDTH, 
+       height = HEIGHT)
 
 # Logg dists in Exp 2 
 df2 <- data.frame(distance = log(c(Z, W) + 1),
@@ -210,7 +206,8 @@ df2 <- data.frame(distance = log(c(Z, W) + 1),
 p <- ggplot(df2, aes(distance, color = group)) + THEME + COLOR + 
   geom_density(size = 1) +
   labs(x = "Distance", y = "Density")
-ggsave(plot = p, filename = "../figures/main/dist_dista_log.png")
+ggsave(plot = p, filename = "../figures/main/dist_dista_log.png", width = 1.5 * WIDTH,
+       height = HEIGHT)
 
 #===============================================================================
 # Bayesian analysis of results
@@ -344,7 +341,7 @@ colnames(post_2) <- c("alpha_1", "alpha_2", "beta_1", "beta_2", "mu_1", "mu_2",
 # ------------------------------------------------
 # Check Model fit
 
-B <- 200 # number of replications
+B <- 100 # number of replications
 y_rep_full_1 <- extract(stanfit_1, "y_rep")$y_rep
 y_rep_1 <- y_rep_full_1[sample(c(1:nrow(y_rep_full_1)), B), ]
 y_rep_full_2 <- extract(stanfit_2, "y_rep")$y_rep
@@ -385,7 +382,7 @@ lvl <- rev(as.character(sort(unique(pdat$iteration))))
 pdat$iteration <- factor(pdat$iteration, levels = lvl)
 
 # Zoom in
-pdat <- filter(pdat, value < 2000)
+pdat <- filter(pdat, value < 2500)
 
 p <- ggplot(pdat, aes(x = value, alpha = iteration, color = type, size = type)) +
         THEME + 
@@ -395,11 +392,11 @@ p <- ggplot(pdat, aes(x = value, alpha = iteration, color = type, size = type)) 
                            name = "") +
         scale_size_manual(values = c(1, rep(0.5, B)), name = "") +
         facet_wrap( ~ experiment + groupID, scales = "free")
-ggsave(plot = p, filename = "../figures/main/post_pred.png")
+ggsave(plot = p, filename = "../figures/main/post_pred.png", width = 2.5 * WIDTH, 
+       height = 1.5 * HEIGHT)
 
 # ------------------------------------------------
 # Visualize results
-
 
 ## Tables of results
 
@@ -415,14 +412,11 @@ res_2 <- data.frame(Mean = apply(post_2, 2, mean),
                     "Std.Error" = apply(post_2, 2, function(x) sqrt(var(x))))
 res <- rbind(res_1, res_2)
 
-
 res_out <- xtable(res, digits = 3, caption = "Parameter estimates for Experiment 1 and 
                   Experiment 2")
+print(res_out, type = "latex" , file = "../paper/res_table.tex" )
 
-print(res_out, type = "latex" , file = "../res_table.tex" )
-
-
-# POsterior distribution of ratio and difference in means
+# Posterior distribution of ratio and difference in means
 pdat <- data.frame(difference = c(post_1$mu_diff, post_1$mu_ratio, post_2$mu_diff, post_2$mu_ratio),
                    experiment = rep(c("Experiment 1: Bias in S", "Experiment 2: Bias in P"), each = 2 * nrow(post_1)),
                    type = rep(rep(c("Difference", "Ratio"), each = nrow(post_1)), 2)
@@ -463,8 +457,8 @@ p <- ggplot(pdat, aes(x = difference, fill = above)) + THEME +
       geom_vline(aes(xintercept=vline), data = pdat) +
       labs(x = "Mean Difference/Ratio", y = "") + 
       geom_text(data = pdat_text, aes(x = x, y = y, label = lab), size = 7, color = "white")
-ggsave(plot = p, filename = "../figures/main/mean_diff_ratio.png")
-
+ggsave(plot = p, filename = "../figures/main/mean_diff_ratio.png", width = 2.5 * WIDTH, 
+       height = 1.5 * HEIGHT)
 
 # -------------------------------------------
 # Trace plots
@@ -474,8 +468,8 @@ pdat1 <- melt(samp_1)
 p <- ggplot(pdat1, aes(x = iterations, y = value, color = chains)) + THEME +
       geom_line() + facet_wrap( ~ parameters, scales = "free", ncol = 1) + 
       scale_color_manual(values = c("cornflowerblue", "yellowgreen"))
-ggsave(plot = p, filename = "../figures/main/trace_1.png", height = 13, 
-       width = 9.74, units = "in")
+ggsave(plot = p, filename = "../figures/main/trace_1.png", height = 2 * WIDTH, 
+       width = 2 * HEIGHT)
 
 pex2 <- c("alpha", "beta")
 samp_2 <- extract(stanfit_2, pars = pex2, permute = F)
@@ -483,13 +477,12 @@ pdat2 <- melt(samp_2)
 p <- ggplot(pdat2, aes(x = iterations, y = value, color = chains)) + THEME + 
       geom_line() + facet_wrap( ~ parameters, scales = "free", ncol = 1) + 
       scale_color_manual(values = c("cornflowerblue", "yellowgreen"))
-ggsave(plot = p, filename = "../figures/main/trace_2.png", height = 13, 
-       width = 9.74, units = "in")
+ggsave(plot = p, filename = "../figures/main/trace_2.png", height = 2 * WIDTH, 
+       width = 2 * HEIGHT)
 
 # ------------------------------------------------------------------------
 # Robustness check
 # ------------------------------------------------------------------------
-
 
 # Different priors for gamma model
 
@@ -551,10 +544,6 @@ post_2_r <- as.data.frame(do.call(cbind, extract(stanfit_2_r, pars = c("alpha",
 colnames(post_2_r) <- c("alpha_1", "alpha_2", "beta_1", "beta_2", "mu_1", "mu_2",
                         "mu_diff", "mu_ratio")
 
-# ------------------------------------------------
-# Visualize results
-
-
 ## Tables of results
 
 # Experiment 2 robustness
@@ -565,4 +554,43 @@ res_2_r <- data.frame(Mean = apply(post_2_r, 2, mean),
 
 res_out_r <- xtable(res_2_r, digits = 3, caption = "Parameter estimates for 
                     robustness check for Experiment 2")
-print(res_out_r, type = "latex" , file = "../res_r_table.tex" )
+print(res_out_r, type = "latex" , file = "../paper/res_r_table.tex" )
+
+# EDA for random forest
+#devtools::install_github("swager/randomForestCI")
+#devtools::install_github("swager/randomForest")
+#devtools::install_github("zmjones/edarf")
+library(edarf)
+vars <- as.list(c("hltref", "gaymarry", "gayadopt", "abrtch", 
+                  "abrthlth", "abrtinc", "abrtbd", "abrtrpe", "abrtdth", "abrtfin", 
+                  "fedenv", "fedwlf", "fedpoor", "fedschool", "drill", "gwhap", 
+                  "gwhow", "aauni", "aawork", "gun", "comm", "edu"))
+
+pd <- lapply(vars, partial_dependence, df= dat, fit = fit, parallel = T, se = F)
+fun <- function(x) {
+  x[, 1] <- as.numeric(x[, 1])
+  x[, 2] <- as.numeric(x[, 2])
+  x$var <- colnames(x)[1]
+  colnames(x) <- c("value", "self_placement", "var")
+  return(x)
+}
+pd1 <- do.call(rbind, lapply(pd, fun))
+p <- ggplot(pd1, aes(x = value, y = self_placement)) + THEME +
+      geom_point(size = 2) + 
+      geom_line(color = "cornflowerblue", size = 1, alpha = 0.7) + 
+      facet_wrap( ~ var, scales = "fixed")
+ggsave(plot = p, filename = "../figures/main/partial_dependence.png")
+
+imp <- sort(fit$importance[, 1], decreasing = T)
+pdat <- data.frame(imp = imp, var = names(imp))
+rownames(pdat) <- NULL
+pdat$var <- factor(pdat$var, levels = pdat$var[order(pdat$imp)])
+
+# Plot importance
+p <- ggplot(pdat, aes(var, imp)) + THEME + 
+  geom_bar(stat = "identity", fill = "cornflowerblue") +
+  labs(y = "Mean Increase in MSE after Permutation") +
+  theme(plot.margin = unit(rep(.15, 4), "in"), axis.title.y = element_blank()) + 
+  coord_flip()
+ggsave(plot = p, filename = "../figures/main/varimp.png", height = HEIGHT, 
+       width = 1.5 * WIDTH)

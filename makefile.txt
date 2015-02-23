@@ -1,1 +1,0 @@
-pandoc -H options.sty rationalization_manuscript.md -o rationalization_manuscript.pdf --bibliography=rationalization.bib
