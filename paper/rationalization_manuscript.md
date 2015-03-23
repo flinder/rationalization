@@ -1,4 +1,4 @@
-% Misreporting of ideological self placement to rationalize party preferences 
+% Misreporting of ideological placement to rationalize party preferences 
 % Fridolin Linder[^contact]
 
 [^contact]: Fridolin Linder is a Ph.D. student in political science at Pennsylvania State University ([fridolin.linder@gmail.com](mailto:fridolin.linder@gmail.com)).
@@ -7,50 +7,79 @@
 
 \end{abstract}
 
-# (Old/preliminary) Introduction/Framing
 
-Classical theories of rational or economic voting assume that
-individuals' candidate or party preferences are a function of the
-distance between their ideal point and the candidate's ideal point in an
-issue space [@downs1957economic; @enelow1989general]. However, research suggests that
-many other factors such as party identification [@campbell1960american] and
-other heuristics to simplify the complex political reality [@lau2006voters],
-personality traits of candidates [@huddy1993gender; @king2002leaders] or non-verbal
-cues like physical appearance, voice frequency, or charisma
-[@olivola2010elected for an overview] influence vote choice.
+# Introduction
 
-Empirical support for issue based proximity preferences often relies on
-high correlations between issue proximity and vote choice in
-observational survey studies. Several authors have argued that these
-correlations are in part due to projection or rationalization:
-preferences for candidates are a causal precedent to the issue positions
-[@campbell1983candidate; @rahn1994rationalization; @lenz2009learning]. In analyses of mostly panel
-data, those studies found a reciprocal causal relationship between issue
-proximity and candidate evaluation.
+The connection between individuals' political preferences and individuals' group or party preferences has gained enormous attention from scholars in political science and other social
+sciences. It is one basic question that, due to it's high normative relevance, is debated for decades now in political science: Do people have exogenous preferences and form elite/group preferences accordingly or do individuals change their political preferences to match their group identities.
 
-This relationship can be seen as a form of rationalization to decrease
-cognitive dissonance. Issue proximity is a reasonable logical criterion
-to use when deciding which candidate to support. As research in social
-psychology shows, people prefer to view themselves as logical and
-coherent once they are forced to reflect on their preferences (Wilson
-1989). If contemplation about the candidate leads to a seemingly
-incoherent preference (i.e. the preference for a candidate is based on
-different criteria then the issue proximity), cognitive dissonance
-arises [@festinger1957prophecy; @brehm1962explorations]. To mitigate this dissonance,
-individuals might rationalize their candidate preference by changing
-their own position or their perception of the candidate’s issue
-position.
+Political scientists have accumulated considerable evidence that elite positions influence individual preferences. The literature on source cues has produced overwhelming experimental evidence of such effects and the conditions  under which they work [@goren2009source; @nicholson2012polarizing; @lau2006voters; @mondak1993source; @mondak1993public; @rahn1993role; @kam2005toes; @arceneaux2008can; @boudreau2009closing]. Other studies have focused on group effects in issue voting with large scale survey and panel studies [@achen2006feels; @page1972policy; @bartels2002beyond; @lenz2009learning; @rahn1994rationalization] and reporting of ideology [@brady1985attitude].
 
-I propose a design consisting of two experiments to test whether this
-process of rationalization occurs.
+Most theoretical explanations of these effects are based some form of the systematic - heuristic cognitive processing model [@chen1999heuristic]. If an individual doesn't have information about an issue, the issue is very complicated or cognitive resources are to be saved, source cues serve as a heuristic to determine the own position on an issue. Other explanations draw on group identity theory [@nicholson2012polarizing], differing factual attribution [@cohen2003party] and consistency [@brady1985attitude]. However, little attention has been focused on differentiating between these theoretical mechanisms. In most of the previous research, the subjects where given information on the position of a pary and a change in opinion was detected. It is not clear however, how much of this effect is due to the information and therefore real opinion change, and how much is due to other biases, for example the need of an individual to be consistent or negative feelings evoked by supporting an issue that is supported by a disliked party or not supporting an issue of a preferred party (independent of the issue itself).
 
-# Theoretical Background
+In this study I concentrate on consistency bias that is introduced, so I hypothesize, through cognitive dissonance that is invoked by the process of beeing forced to report opinions that differ from the stance of the preferred party or are close to a disliked party. I argue that due to the multidimensionality of the space in which political choices take place and due to the small number of options a citizen can choose from, there will almost always be discrepancies between a hypothetical personal ideal point and the perceived position of the preferred party. When asked to report opinions on an issue, an supplied with information about the party's stance on that issue (or asked to report the perceived stance of the party on that issue first) these discrepancies have to be revealed and openly admitted. Since individuals have a need to appear consistent [citation] this fact will produce cognitive dissonance.
+
+I hypothesize, that in order to reduce this dissonance, subjects will try to move either their own position or (if no external information on the party stance is provided) the position they report for the party, depending on their affect towards the party.
+
+Using an experimental design, I will isolate an estimate the magnitude of the consistency bias that is evoked when asking subjects to state their party preference, that party's ideological position and their own ideological position on a liberal conservative scale. This design allows to estimate the consistency effect in isolation because no external information is provided. With the use of a machine learning algorithm to predict individual level self reported ideology from political issue questions I am able to estimate average individual biases in order to quantify the magnitude of the consistency bias.
+
+My findings make two major contributions. First, they shed light on the different mechanisms that can lead an individual to change her position towards her preferred party. More precisely they hint at and estimate the size of consistency bias. And second, they show the potential and magnitude in the measurement of self reported ideology and perceived party ideology when measured in conjunction with party preferences (as is done in some major political science surveys). I furthermore find that perceived party positions are biased more than individual positions, this might hint at a asymmetric 'gravity' between the positions, or more information on the own position. However, this is a post-hoc finding that would have to be confirmed by further empirical tests.
+
+
+
+# Theory
+
+## Previous Research
+
+Political science research has focused much attention on the formation, expression and effects of political attitudes. In classical rational choice theory preferences are conceptualized as exogenous caused of choice, and the space in which preferences exist is mostly an issue space [@downs1957economic; @enelow1989general]. Especially in the field of political psychology the understanding of preferences has been extended in two ways. First, the definition of the relevant space has been extended. It has been found that in relation to choice more dimensions are relevant than just the "rational" issue dimensions. research suggests that many other factors such as party identification [@campbell1960american] and other heuristics to simplify the complex political reality [@lau2006voters], personality traits of candidates [@huddy1993gender; @king2002leaders] or non-verbal cues like physical appearance, voice frequency, or charisma [@olivola2010elected for an overview] influence preference or vote choice. Second, the theoretical "degrees of freedom" have been extended. In the classical rational chioce setting both the individual preferences and the position of a candidate or party are fixed, the only free parameter is the choice (which is assumed to be found by choosing the candidate or party that minimizes that distance). In the more psychological literature, the individual preferences (or position in the relevant space) is not fixed, but can be a function of other factors.
+
+A well established example of this comes from the literature on source cues [@nicholson2012polarizing; @goren2009source; @cohen2003party]. Individuals, when asked about their opinion on an issue report differing preferences when presented with information about what political actor holds this preference compared to when they are just presented with the neutral issue. Depending on the affect they hold towards the source (often a political party or group): If the subject likes the group, he moves towards the group's position, if the subject has negative affect towards the group, he moves away from it.
+
+It has been consistently found, that individuals with higher levels of political information are less likely to rely on source cues when repoorting their positions, and that the effect of source cues is stronger on issues that complex or not well known [@kam2005toes; @lupia1994shortcuts; @mondak1993public; @arceneaux2009educating]. While the empirical evidence for an effect of source cues on expressed opinion is unanbiguous, several theoretical explanations have been proposed for it. The fact that source cues show their strongest effect for in low information groups and on new and unestablished issues, is often interpreted as evidence for heuristic processing [@lau2006voters; @chaiken1980heuristic, @lenz2009learning]. Most individuals are not very involved in politics and do not want to spend coginitive ressources to systematically process political information about parties, candidates and issues [cite converse or someone]. Party cues offer a shortcut, where the subject simply relies on her affect towards the source cue to make up her mind about the issue, assuming that the own preferences are aligned with preffered groups and disalignes with disliked groups [@lau2001advantages].
+
+However, even on well known and established issues and among politically informed subjects source cue effets have been shown [@nicholson2012polarizing; @lau2001advantages]. @nicholson2012polarizing proposes group identity theory as an explanation [Tajfel1982]. Individuals want a positive in-group identity while keeping the own in group distinct from others [Brewer1991]. So just the fact that an issue or position is held by the in-group evokes more positive feelings for it and therefore produces biases.
+
+Another theoretical explanation for the effects of source cues is that the cue affects the factual and moral qualities of the issue [@cohen2003party; @robinson1995actual; verplanken2002motivated]. The classical example for this is the 'liberal' who invokes the protection of live to justify oposition to the death penalty but the rights and needs of the mother to approve abortions. As well as the conservative who relies on the moral dimension of security, to be for the death penalty, but invokes the sanctity of life to oppose abortion. Depending on the group membership, different moral dimensions are used to justify a position that has no inherent objective value to the subject. However, in this theoretical explanation information plays an important role, too. The possibility for a subject to change the factual attribution or to a minor degree invoke moral dimensions depends on her information on the issue.
+
+
+## Consistency Bias
+
+An explanation that has received much less attention is the consistency effect. In the next section I lay out a theoretical framework that explains bias in reporting of political positions not for the reasons mentioned in this section but for the fact that reporting positions in only one dimension forces the subject to admit necessary discrepancies between the own position and the preferred party's position. These discrepancies cause cognitive dissonance, which the subject tries to reduce by biasing her reported position.
+
+For each individual, preferences for candidates or parties or other political elites (henceforth just parties) can be conceptualized in a $D$ dimensional space, where $D$ can vary between individuals. As discussed above, these dimensions could represent anything that is relevant in the subject's evaluation of parties. It might be positions on concrete issues, personal characteristics of candidates of that party, or might be conceptualized as aggregated ideological dimensions like economic left - right or liberal conservative. Let the citizen have position $\mathbf{S} = [S_1, S_2, ... ,S_D]$, and each of the parties, $j = 1, 2, ..., K$ is perceived by the citizen to have position $\mathbf{P_j} = [P_{j1}, P_{j2}, ..., P_{jK}]$. If the space is exhaustive of all dimensions that are relevant for the citizen, then the preferred party is $p^* = \operatorname{argmin}_p ||\mathbf{S} - \mathbf{P_p}||$. However, the solution to this multidimensional problem is not necessaruly the optimum in each dimension. In other words the party closest to the position of the citizen in the $D$ - dimensional space, is not necessarily the closest party on each relevant dimension. This is illustrated in two dimensions in Figure [??]. Party A is the closest, considering all dimensions together (the distance vector between the points is shorther), but party B is closer when considering the projections onto the x - axis. Furthermore, due to the discrete nature of the optimization, the distance between the ideal point of the citizen and the ideal point of the party will almost never be zero in any single dimension even if the preferred party is closest to the subject's ideal point.
+
+\input{theory_figure.tex}
+
+If a researcher wants to measure the position of a subject in a specific dimension, her perception of the positions of political parties on that dimension and the general party preference, the subject is forced to report these discrepancies. Common knowledge and research in social psychology showed that people have a need to appear consistent [citation]. I therefore expect that depending on its size, this discrepancy will cause cognitive dissonance for the individual [@festinger1957prophecy, @brehm1962explorations] [maybe some more recent citations?]
+
+- If revealed just like this, these discrepancies might cause cognitive dissonance to the individual [individuals want to appear rational or consistent bla bla some evidenve from social psychology]
+
+- There are   ways for an individual to deal with this:
+  + They could ignore it because they are aware of the multidimensionality
+  + Change their preference
+  + Change own postition on the dimension
+  + Change the position of the preferred party
+
+In this paper I will analyze the latter two options. If the party preference and either the own or the preferred party's position is fixed, the other position should be changed to mitigate dissonance. This can also be seen as a form of rationalization.
+
+[why is it different from anchoring, or maybe put that in the discussion for alternative explanations, since it the exact research design is important]
+
+[Why is it important]
+
+The occurrence of such a consitency bias is relevant in several regards:
+    - It shows that there is a need for consistency which adds another explanation to the findings of the party cues literature
+    - It is relevant for the joint measurement of party preference, perceived party postition and
+    - Extends the findings of @rahn1994rationalization that rationalization might not only occur with issue information but also with ideology measurements
+
+    
 
 # Study Design
 
 ## Research Design
 
-I define the individual’s true position ($S_i$) as the position that respondent $i$ would report when asked to place only herself on the ideological dimension and the party's true position ($P_i$; as perceived by respondent $i$) as the position the respondent would assign if asked to rate only the party. I denote the reported positions as $\hat{S}_i$ and $\hat{P}_i$ for individual and party positions respectively. Figure \ref{fig:DGP} displays graphically the two scenarios how convergence bias can occur. If the question for $S$ is asked first and the question for $P$ is asked second, $\hat{S}$ should equal $S$ (on average) and $\hat{P}$ should be closer to $S$ than $P$. 
+[individual level assesment avoids problems with differential scale functioning]
+
+I define the individual's true or unbiased position ($S_i$) as the position that respondent $i$ would report when asked to place only herself on the ideological dimension and the party's true or unbiased position ($P_i$; as perceived by respondent $i$) as the position the respondent would assign if asked to rate only the party. I denote the reported positions as $\hat{S}_i$ and $\hat{P}_i$ for individual and party positions respectively. Figure \ref{fig:DGP} displays graphically the two scenarios how convergence bias can occur. If the question for $S$ is asked first and the question for $P$ is asked second, $\hat{S}$ should equal $S$ (on average) and $\hat{P}$ should be closer to $S$ than $P$. 
 
 \input{research_design_figure.tex}
 
@@ -172,7 +201,7 @@ Samples from the posteriors of both experiments have been generated using STAN (
 
 ## Predictive Model
 
-To get an estimate of $S$ in Group 2, a model is trained, that predicts the self placement from answers to issue questions. Since in Group 1 $S$ is asked before $P$ it is unbiased as defined above. I use a random forest to train the model [@breiman2001random]. Random forests have very good predictive performance. Further more, the use of random forests allows me to collect data only in two groups. To test Hypothesis two I compare the distances between $S$ and $S^*$ in both groups. With a normal predictive model, additional data would have to be collected, to not predict values for the data that has been used to train the model. The advantage of a random forest is an ensemble of many decision trees, each grown to a bootstrap sample of the data. The obsrevations not contained in the bootstrap sample are called out-of bag observations for a specific tree. THerefore, for each observation, there is a number of decision trees that were fit without using this observations. For the predictions of $S$ in Group 1, a new random forest is formed for each observation, just using the trees that were fit without that observation.
+To get an estimate of $S$ in Group 2, a model is trained, that predicts the self placement from answers to issue questions. Since in Group 1 $S$ is asked before $P$ it is unbiased as defined above. I use a random forest to train the model [@breiman2001random]. Random forests have very good predictive performance. Further more, the use of random forests allows me to collect data only in two groups. To test Hypothesis 2 I compare the distances between $S$ and $S^*$ in both groups. With a normal predictive model, additional data would have to be collected, to not predict values for the data that has been used to train the model. The advantage of a random forest is, that it is an ensemble of many decision trees, each grown to a bootstrap sample of the data. The observations not contained in the bootstrap sample are called out-of bag observations for a specific tree. Therefore, for each observation, there is a number of decision trees that were fit without using these observations. For the predictions of $S$ in Group 1, a new random forest is formed for each observation, just using the trees that were fit without that observation. The predictors were selected from the American National Election Study, by training a random Forest to the complete data set using all potential predictors for ideology (on a 7 point liberal - conservative scale). I then selected the 20 most important predictors according to the permutation importance criterion. Details on this process can be found in the online appendix (Github).
 
 ![Predicted self positions (out-of-bag for Group 1) from the random forest against observed values by experimental group. \label{fig:pred}](../figures/main/prediction.png)
 
@@ -201,9 +230,6 @@ Table 2 displays the posterior means and 95% credibility intervals for all param
 \input{res_table.tex}
 
 # References
-
-
-\clearpage
 
 # Appendix
 

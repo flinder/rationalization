@@ -43,6 +43,7 @@ dat$pref <- factor(dat$pref, labels = c("democrat", "republican",
                    levels = c(1:5))
 dat$pref2_fac <- NULL
 dat$pref2 <- NULL
+
 #===============================================================================
 # Descriptive plots
 #===============================================================================

@@ -1,3 +1,6 @@
+% Misreporting of ideological placement to rationalize party preferences 
+% Fridolin Linder
+
 # Theory
 
 \input{research_design_figure}

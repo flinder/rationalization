@@ -1,0 +1,32 @@
+\begin{figure}[ht!]
+  \centering
+  \begin{tikzpicture}[scale=1]
+
+    % Axis
+    \coordinate (y2) at (0,9);
+    \coordinate (x2) at (8,0);
+    \draw[axis] (y2) node[above] {} -- (0,0) --  (x2) node[right] {};
+
+    \draw[fill = black] (5,1) circle (0.1);
+    \node [above] at (5,1) {B};
+    \draw[fill =black] (1,7) circle (0.1);
+    \node [above] at (1,7) {C};
+    \draw[fill =black] (6,8) circle (0.1);
+    \node [above] at (6,8) {A};
+    \draw[->] (1,7) -- (5,1);
+    \draw[->] (1,7) -- (6,8);
+    \draw[fill =black] (10,10) circle (0.00001);
+
+    \draw[dashed] (1,7) -- (1,0) node[below]{C};
+    \draw[dashed] (5,1) -- (5,0) node[below]{B};
+    \draw[dashed] (6,8) -- (6,0) node[below]{A};
+
+    \draw[dashed] (1,7) -- (0,7) node[left]{C};
+    \draw[dashed] (6,8) -- (0,8) node[left]{B};
+    \draw[dashed] (5,1) -- (0,1) node[left]{A};
+    % \draw[help lines] (0,0) grid (10,10);
+
+  \end{tikzpicture}
+  \caption{Illustration of difference between multidimensional optimum and unidimensional optimum. The citizen $C$ decides between two parties $A$ and $B$. $A$ minimizes the ecludian distance in the two dimensional space. However, $B$ is closer to $C$ in the x - dimension. }
+  \label{fig:theo}
+\end{figure}
