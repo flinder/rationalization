@@ -229,8 +229,8 @@ parameters {
 
 model {
   // priors
-  alpha ~ gamma(1, 0.5);
-  beta ~ gamma(1, 0.5);
+  alpha ~ gamma(0.000001, 0.000001);
+  beta ~ gamma(0.000001, 0.000001);
   
   // likelihood
   for (n in 1:N){
@@ -253,7 +253,7 @@ generated quantities {
 }
 "
 
-model_t = "
+model_norm = "
   data {
     int<lower=1> N;
     vector[N] y;

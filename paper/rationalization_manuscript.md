@@ -50,45 +50,30 @@ For each individual, preferences for candidates or parties or other political el
 
 \input{theory_figure.tex}
 
-If a researcher wants to measure the position of a subject in a specific dimension, her perception of the positions of political parties on that dimension and the general party preference, the subject is forced to report these discrepancies. Common knowledge and research in social psychology showed that people have a need to appear consistent [citation]. I therefore expect that depending on its size, this discrepancy will cause cognitive dissonance for the individual [@festinger1957prophecy, @brehm1962explorations] [maybe some more recent citations?]
+If a researcher wants to measure the position of a subject in a specific dimension, her perception of the positions of political parties on that dimension and the general party preference, the subject is forced to report these discrepancies. Common knowledge and research in social psychology showed that people have a need to appear consistent [@cialdini1995preference]. I therefore expect that depending on its size, this discrepancy will cause cognitive dissonance for the individual [@festinger1957prophecy, @brehm1962explorations]. 
 
-- If revealed just like this, these discrepancies might cause cognitive dissonance to the individual [individuals want to appear rational or consistent bla bla some evidenve from social psychology]
+There are several different possibilities to react to this dissonance.First, the subject might be aware of the multidimensionality and therefore accept the discrepancy in a single dimension. In this case no consistency bias would be expected. Second, if another party then the preferred party appears to be closer to the her own ideal point, the subject might change her expressed preference to decrease the distance, however, there might still be a discrepancy between the new party and the ideal point. Third, the subject can move their own reported position towards the perceived party position. Or fourth, the reported perceived party position can be moved towards the individual ideal point. In the latter two case, the individual rationalizes the party preferrence by reporting the preffered party's perceived position and the own ideal point to be closer together then the individual would report if not all the questions are asked together [@rahn1994rationalization]. 
 
-- There are   ways for an individual to deal with this:
-  + They could ignore it because they are aware of the multidimensionality
-  + Change their preference
-  + Change own postition on the dimension
-  + Change the position of the preferred party
+In this paper I will analyze the latter two options. I choose a general liberal - conservative scale as the dimension of interest (the dimension, subjects will be asked to evaluate themselfs and others on). The liberal - conservative scale is still widely used in political science as a general measure of ideology and I expect most respondents to have an idea where they see themselves and their preferred party on this scale, thereby reducing the noise in the measure [i don't know]
 
-In this paper I will analyze the latter two options. If the party preference and either the own or the preferred party's position is fixed, the other position should be changed to mitigate dissonance. This can also be seen as a form of rationalization.
-
-[why is it different from anchoring, or maybe put that in the discussion for alternative explanations, since it the exact research design is important]
-
-[Why is it important]
-
-The occurrence of such a consitency bias is relevant in several regards:
-    - It shows that there is a need for consistency which adds another explanation to the findings of the party cues literature
-    - It is relevant for the joint measurement of party preference, perceived party postition and
-    - Extends the findings of @rahn1994rationalization that rationalization might not only occur with issue information but also with ideology measurements
-
-    
+If the party preference and either the own or the preferred party's position is fixed, the other position should be changed to mitigate dissonance if a consistency bias exists. Since I analyze consistency bias here, I define the unbiased position to be the position the subject would report without bias introduced through consistency effects as described above. This does not mean the unbiased position is a measurement of the 'true' ideological position. There are several other biases an problems with the measurement and conceptualization of self reported ideology [some citations, maybe anchoring etc.]
+ 
+The occurence of such a consistency bias has implication for our theoretical understanding of the effects party preferrence on issue preferences (in particular for the source cues literature) as well as for the measurement of self reported ideology and perceived party positions. The implications for the theoretical understanding of source cue effects are threefold: First, the consistency bias shown in this work is solely stemming from the measurement of party preference, self and party position. This would imply, that the mesurement procedure of the source cue literature alone might invoke a consistency bias that explains part of the found effects. Second, the result would hint at consitency bias as another potential mechanism that might explain part of the source cue effects, in a theoretical sense, hence separate from the effect that is invoked by the measurement. In other words, the existence of the measurement effect, demonstrates the basic psychological mechanism that drives subjects to move their own position or preference towards a party exist. However the experiment in this study gives no direct evidence for source cue effects 'in the real world', i.e. not just in the survey. Third, source cue effects, in all studies that I am aware of, just concentrate on the biases in the *subjects'* reported positions, and party positions where fixed by the researcher [MENTION THAT IN THE INTRODUCTION TOO]. The theory laid out here, however, would suggest that cognitive biases also operate on the perceptions of parties if the self position is fixed or sufficiently constrained [look if there is not some literature, at least the 'people think everybody agrees with the literature' I think mentioned in goren2009 or nicholson2012]. 
 
 # Study Design
 
-## Research Design
+I use an experimental design to evaluate the existence of consistency bias in the measurement of ideology in surveys. In order to test if subjects decrease dissonance by biasing either their self reported position or the perceived party position on a liberal - conservative scale, I have to fix their party preference and one of the two reported positions. I achieve this by asking the subjects to answer the questions for the measures that are to be fixed first. Since I want to asses the bias in reported self position and reported pary position the party preference is asked first to fix it. This means I assume that reporting of the party preference does not influence the reported self or party position by itself. 
 
-[individual level assesment avoids problems with differential scale functioning]
-
-I define the individual's true or unbiased position ($S_i$) as the position that respondent $i$ would report when asked to place only herself on the ideological dimension and the party's true or unbiased position ($P_i$; as perceived by respondent $i$) as the position the respondent would assign if asked to rate only the party. I denote the reported positions as $\hat{S}_i$ and $\hat{P}_i$ for individual and party positions respectively. Figure \ref{fig:DGP} displays graphically the two scenarios how convergence bias can occur. If the question for $S$ is asked first and the question for $P$ is asked second, $\hat{S}$ should equal $S$ (on average) and $\hat{P}$ should be closer to $S$ than $P$. 
+I define the individual's unbiased position ($S_i$) as the position that respondent $i$ would report when asked to place only herself on the ideological dimension and the party's unbiased position ($P_i$; as perceived by respondent $i$) as the position the respondent would assign if asked to rate only the party. Note that this does not mean that I assume these positions are unbiased in the sense of the 'true' ideology value. Unbiased in this design means just free of convergence bias introduced through the mechanisms described in the theory section. I denote the reported positions as $\hat{S}_i$ and $\hat{P}_i$ for individual and party positions respectively. Figure \ref{fig:DGP} displays graphically the two scenarios how convergence bias in one dimension can occur. If the question for $S$ is asked first and the question for $P$ is asked second, $\hat{S}$ should equal $S$ (on average) and $\hat{P}$ should be closer to $S$ than $P$. 
 
 \input{research_design_figure.tex}
 
-If the order of the question is reversed, $\hat{P}$ should equal $P$ and $\hat{S}$ should be biased towards $P$. In other words, depending on what question they are asked first, I expect that subjects bias their second answer in order to decrease the distance between themselves and the preferred party. Each experiment is designed to estimate one of these two forms of convergence bias. In the following sections I will describe the two experiments in more detail. 
+If the order of the question is reversed, $\hat{P}$ should equal $P$ and $\hat{S}$ should be biased towards $P$. In other words, depending on what question they are asked first, I expect that subjects bias their second answer in order to decrease the distance between themselves and the preferred party. I conduct two experiments, each is designed to estimate one of these two forms of convergence bias.
 
 *Experiment 1, Bias in $\hat{S}$*: 
 The goal of this experiment is to obtain an estimate of the bias that is introduced into the measurement of ideological self placement as displayed in scenario 2 in Figure \ref{fig:DGP}. In the 'control group' the question for $S$ is asked first, therefore the answer is unbiased according to the definition above[^assumptions]. In the 'treatment group' the question for $P$ is asked first. I expect that respondents in the treatment group will bias their $\hat{S}_i$ towards their $\hat{P}_i$. A straight forward test would be to compare the average $\bar{\hat{S}}$ in the two groups and take the difference as the treatment effect. However, since we don't know a priori, if $P_i$ lies to the left or right of $S_i$, and it might lie on different sides for different respondents, the treatment effect might be lost when just taking the average. 
 
-To avoid this problem, I will estimate the unbiased $\hat{S}$ in the treatment group from observables. Additionally to the placement questions, all respondents are asked for their opinions on a set of recent political issue questions. Since $\hat{S}$ is unbiased in the control group, this data can be used to train a predictive model, that then can be used to estimate the 'true' self placement in the treatment group. I will denote this estimate by $S^*$. The details on the model used for prediction are described in Section [REFERENCE TO SECTION: PREDICTIVE MODEL]. 
+To avoid this problem, I will estimate the unbiased $\hat{S}$ in the treatment group from observables. Additionally to the placement questions, all respondents are asked for their opinions on a set of recent political issue questions. Since $\hat{S}$ is unbiased in the control group, this data can be used to train a predictive model, that then can be used to estimate the unbiased self placement in the treatment group. I will denote this estimate by $S^*$. The details on the model used for prediction are described in Section [REFERENCE TO SECTION: PREDICTIVE MODEL]. 
 
 With this estimate of the true $S$, the treatment effect can be estimated by comparing the average distance between the prediction and the reported position in the treatment and control group. Since I'm only interested differences in direction of the preferred party's position $P$, the outcome of interest is the distance between $\hat{S}$ and $S^*$ in direction of $P$:
 
@@ -127,17 +112,6 @@ $$ H_2: T_2 < 1 $$
 
 [^robustness]: Since$\hat{S} = S^*$, on average, in the treatment group comparison could be made to the distance between $\hat{P}$ and $S^*$, see the appendix for this robustness check. 
 
-## Preregistration
-
-The study has been preregistered. The preregistration is in form of a frozen branch of the github repository that contains all work related to this project. It can be viewed under <https://github.com/flinder/rationalization/tree/pre_registration> It contains all public files pertaining to the study, before the main data collection began. Although not all details have been fixed in the pre-registration, the general research design, variables of interest and statistics are the same. [Justify all deviations here]
-
-- different outcome measure for experiment 1 (realized the one I had before was dumb)
-- bayesian framework for the whole thing
-- different test for experiment 2 (gamma distribution)
-
-In preparation for the main data collection, I conducted a test run of
-the experiment with 50 participants. Mostly to test the procedures to connect Qualtrics and MTurk.
-
 ## Data Collection and Description
 
 The sample size was determined with a simulation approach (see the online appendix for details). It was determined that at least 250 respondents per group are necessary to detect a substantively significant effect size (at least 10% reduction in distance between the reported positions). 
@@ -152,7 +126,9 @@ Group 2 (P asked first)               Treatment                   Control
 -----------------------------------------------------------------------------------
 Table: Relation of survey groups to experimental groups in Experiments 1 and 2.
 
-The data was collected using Amazon's Mechanical Turk (MTurk). Several studies showed that MTurk provides data of reasonable quality for research purposes [@mason2012conducting; @berinsky2012evaluating; @buhrmester2011amazon]. MTurk workers are redirected to a Qualtrics survey to complete the experiment. The specific survey questions are available online[^surveys]. Respondents were given equal probability to fall into Group 1 or Group 2. Respondents were required to be older than 18 years and to live in US (some workers had US accounts but foreign IP addresses, those users where excluded). Furthermore, respondents that reported to have no party preference were excluded. The final sample used for analysis consists of 508 respondents (Group 1: 251, Group 2: 257), the mean age is 33.4 years (33.7, 33.3) and 64.5% of the respondents are male (64.1, 65.0). Figure \ref{fig:pref} displays the distribution of party preferences (before respondents without preference have been excluded), more description of the sample can be found in the appendix [REFERENCE]
+The data was collected using Amazon's Mechanical Turk (MTurk)[^preregistration]. Several studies showed that MTurk provides data of reasonable quality for research purposes [@mason2012conducting; @berinsky2012evaluating; @buhrmester2011amazon]. MTurk workers are redirected to a Qualtrics survey to complete the experiment. The specific survey questions are available online[^surveys]. Respondents were given equal probability to fall into Group 1 or Group 2. Respondents were required to be older than 18 years and to live in US (some workers had US accounts but foreign IP addresses, those users where excluded). Furthermore, respondents that reported to have no party preference were excluded. The final sample used for analysis consists of 508 respondents (Group 1: 251, Group 2: 257), the mean age is 33.4 years (33.7, 33.3) and 64.5% of the respondents are male (64.1, 65.0). Figure \ref{fig:pref} displays the distribution of party preferences (before respondents without preference have been excluded), more description of the sample can be found in the appendix [REFERENCE].
+
+[^preregistration]: The study has been preregistered. The preregistration is in form of a frozen branch of the github repository that contains all work related to this project. It can be viewed under <https://github.com/flinder/rationalization/tree/pre_registration> It contains all public files pertaining to the study, before the main data collection began. Although not all details have been fixed in the pre-registration, the general research design, variables of interest and statistics are the same.
 
 [^surveys]: <https://github.com/flinder/rationalization/tree/master/surveys>
 
