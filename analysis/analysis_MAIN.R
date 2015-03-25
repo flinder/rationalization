@@ -13,6 +13,10 @@ library(dplyr)
 library(rstan)
 library(reshape2)
 library(xtable)
+#devtools::install_github("swager/randomForestCI")
+#devtools::install_github("swager/randomForest")
+#devtools::install_github("zmjones/edarf")
+library(edarf)
 
 # Load data
 dat <- read.csv("../data/main_study/main_study_clean.csv", sep = ",")
@@ -66,7 +70,8 @@ HEIGHT <- 5
 
 
 # Choice questions
-df <- select(dat, -(startDate:require), -contains("attchk"), -contains("t_"),
+colnames(dat)[9] <- "req"
+df <- dplyr::select(dat, -(startDate:req), -contains("attchk"), -contains("t_"),
              -contains("placement"), -group, -comment, -age, -tcompl, -comm)
 df$pref <- as.integer(df$pref)
 
@@ -114,10 +119,37 @@ for(var in vars_to_recode)
 
 mod <- self_placement ~ hltref + gaymarry + gayadopt + abrtch + abrthlth + abrtinc + 
   abrtbd + abrtrpe + abrtdth + abrtfin + fedenv + fedwlf + fedpoor + fedschool + 
-  drill + gwhap + gwhow + aauni + aawork + gun + comm + edu
-fit <- randomForest(mod, data = dat[dat$group == 1, ],  importance = T, keep.inbag = TRUE)
+  drill + gwhap + gwhow + aauni + aawork + gun + comm + edu + sex + age
+fit <- randomForest(mod, data = dat[dat$group == 1, ],  importance = T, keep.inbag = TRUE, mtry = 4)
+fit
+# EDA for random forest
+dat1 = dat[dat$group == 1, ]
 
-# put predictions into data.frame
+pd <- partial_dependence(var = c("hltref", "gaymarry", "gayadopt", "abrtch",
+                           "abrthlth", "abrtinc", "abrtbd", "abrtrpe", "abrtdth",
+                           "abrtfin", "fedenv", "fedwlf", "fedpoor", "fedschool",
+                           "drill", "gwhap", "gwhow", "aauni", "aawork", "gun",
+                           "comm", "edu", "sex", "age"), fit = fit, df = dat1)
+
+p <- plot_pd(pd)
+ggsave(plot = p, filename = "../figures/main/partial_dependence.png")
+
+imp <- sort(fit$importance[, 1], decreasing = T)
+pdat <- data.frame(imp = imp, var = names(imp))
+rownames(pdat) <- NULL
+pdat$var <- factor(pdat$var, levels = pdat$var[order(pdat$imp)])
+
+# Plot importance
+p <- ggplot(pdat, aes(var, imp)) + THEME + 
+  geom_bar(stat = "identity", fill = "cornflowerblue") +
+  labs(y = "Mean Increase in MSE after Permutation") +
+  theme(plot.margin = unit(rep(.15, 4), "in"), axis.title.y = element_blank()) + 
+  coord_flip()
+ggsave(plot = p, filename = "../figures/main/varimp.png", height = HEIGHT, 
+       width = 1.5 * WIDTH)
+
+
+# Put predictions into data.frame
 dat$pred[dat$group == 1] <- predict(fit)
 dat$pred[dat$group == 2] <- predict(fit, dat[dat$group == 2, ])
 
@@ -253,28 +285,22 @@ generated quantities {
 }
 "
 
-model_norm = "
+model_t = "
   data {
     int<lower=1> N;
     vector[N] y;
     int<lower=1> groupID[N];
   }
-  transformed data{
-    real meany;                                   // mean of y; see mu prior
-    meany <- mean(y); 
-  }
   parameters {
-    vector[2] mu;                                 // estimated group means and sd
-    vector<lower=0>[2] sigma;                     // Kruschke puts upper bound as well; ignored here
-    real<lower=0, upper=100> nu;                  // df for t distribution
+    vector[2] mu;                                
+    vector<lower=0>[2] sigma;                    
+    real<lower=0, upper=100> nu;                 
   }
   model {
     // priors
-    mu ~ normal(0, 100);                       // note that there is a faster implementation of this for stan; sd here is more informative than in Kruschke paper
-    sigma ~ cauchy(0, 5);
-    nu ~ exponential(1.0/29);                     // Based on Kruschke; makes mean nu 29 (might consider upper bound, too large and might as well switch to normal)
-  
-  
+    mu ~ normal(0, 1000);                  
+    sigma ~ inv_gamma(1, 1);
+    nu ~ exponential(0.001);   
     // likelihood
     for (n in 1:N){
       y[n] ~ student_t(nu, mu[groupID[n]], sigma[groupID[n]]);
@@ -282,12 +308,11 @@ model_norm = "
     }
   }
   generated quantities {
-    vector[N] y_rep;                               // posterior predictive distribution
+    vector[N] y_rep;
     real mu_diff;
     real mu_ratio;
     mu_diff <- mu[1] - mu[2];
     mu_ratio <- mu[1] / mu[2];
-
     for (n in 1:N){
       y_rep[n] <- student_t_rng(nu, mu[groupID[n]], sigma[groupID[n]]);
     }
@@ -296,14 +321,13 @@ model_norm = "
   }
 "
 
-
 ## Compile models
-#c_mod_gamma <- stan_model(model_code = model_gamma)
-#save(c_mod_gamma, file = "c_mod_gamma.RData")
-#c_mod_t <- stan_model(model_code = model_t)
-#save(c_mod_t, file = "c_mod_t.RData")
-load("c_mod_gamma.RData")
-load("c_mod_t.RData")
+c_mod_gamma <- stan_model(model_code = model_gamma)
+save(c_mod_gamma, file = "c_mod_gamma.RData")
+c_mod_t <- stan_model(model_code = model_t)
+save(c_mod_t, file = "c_mod_t.RData")
+#load("c_mod_gamma.RData")
+#load("c_mod_t.RData")
 
 # ---------------------------------------------------
 # Compare Bias in self (x and Y)
@@ -313,10 +337,10 @@ groupID = c(rep(1, length(X)), rep(2,  length(Y)))
 standata_1 <- list(N = length(y), groupID = groupID, y = y)
 
 # Sample from it
-#stanfit_1 <- sampling(object = c_mod_t, data = standata_1, iter = 15000, 
-#                      warmup = 5000, chains = 2)
-#save(stanfit_1, file = "stanfit_1.RData")
-load("stanfit_1.RData")
+stanfit_1 <- sampling(object = c_mod_t, data = standata_1, iter = 15000, 
+                      warmup = 5000, chains = 2)
+save(stanfit_1, file = "stanfit_1.RData")
+#load("stanfit_1.RData")
 pex1 <- c("mu", "sigma", "nu", "mu_diff", "mu_ratio")
 post_1 <- as.data.frame(do.call(cbind, extract(stanfit_1, pars = pex1)))
 colnames(post_1) <- c("mu_1", "mu_2", "sigma_1", "sigma_2", "nu", "mu_diff", 
@@ -330,10 +354,10 @@ groupID = c(rep(1, length(X)), rep(2,  length(Y)))
 standata_2 <- list(N = length(y), groupID = groupID, y = y)
 
 # Sample from it
-#stanfit_2 <- sampling(object = c_mod_gamma, data = standata_2, iter = 15000, 
-#                      warmup = 5000, chains = 2)
-#save(stanfit_2, file = "stanfit_2.RData")
-load("stanfit_2.RData")
+stanfit_2 <- sampling(object = c_mod_gamma, data = standata_2, iter = 15000, 
+                      warmup = 5000, chains = 2)
+save(stanfit_2, file = "stanfit_2.RData")
+#load("stanfit_2.RData")
 pex2 <- c("alpha", "beta", "mu", "mu_diff", "mu_ratio")
 post_2 <- as.data.frame(do.call(cbind, extract(stanfit_2, pars = pex2)))
 colnames(post_2) <- c("alpha_1", "alpha_2", "beta_1", "beta_2", "mu_1", "mu_2",
@@ -383,7 +407,7 @@ lvl <- rev(as.character(sort(unique(pdat$iteration))))
 pdat$iteration <- factor(pdat$iteration, levels = lvl)
 
 # Zoom in
-pdat <- filter(pdat, value < 2500)
+#pdat <- filter(pdat, value < 2500)
 
 p <- ggplot(pdat, aes(x = value, alpha = iteration, color = type, size = type)) +
         THEME + 
@@ -556,42 +580,3 @@ res_2_r <- data.frame(Mean = apply(post_2_r, 2, mean),
 res_out_r <- xtable(res_2_r, digits = 3, caption = "Parameter estimates for 
                     robustness check for Experiment 2")
 print(res_out_r, type = "latex" , file = "../paper/res_r_table.tex" )
-
-# EDA for random forest
-#devtools::install_github("swager/randomForestCI")
-#devtools::install_github("swager/randomForest")
-#devtools::install_github("zmjones/edarf")
-library(edarf)
-vars <- as.list(c("hltref", "gaymarry", "gayadopt", "abrtch", 
-                  "abrthlth", "abrtinc", "abrtbd", "abrtrpe", "abrtdth", "abrtfin", 
-                  "fedenv", "fedwlf", "fedpoor", "fedschool", "drill", "gwhap", 
-                  "gwhow", "aauni", "aawork", "gun", "comm", "edu"))
-
-pd <- lapply(vars, partial_dependence, df= dat, fit = fit, parallel = T, se = F)
-fun <- function(x) {
-  x[, 1] <- as.numeric(x[, 1])
-  x[, 2] <- as.numeric(x[, 2])
-  x$var <- colnames(x)[1]
-  colnames(x) <- c("value", "self_placement", "var")
-  return(x)
-}
-pd1 <- do.call(rbind, lapply(pd, fun))
-p <- ggplot(pd1, aes(x = value, y = self_placement)) + THEME +
-      geom_point(size = 2) + 
-      geom_line(color = "cornflowerblue", size = 1, alpha = 0.7) + 
-      facet_wrap( ~ var, scales = "fixed")
-ggsave(plot = p, filename = "../figures/main/partial_dependence.png")
-
-imp <- sort(fit$importance[, 1], decreasing = T)
-pdat <- data.frame(imp = imp, var = names(imp))
-rownames(pdat) <- NULL
-pdat$var <- factor(pdat$var, levels = pdat$var[order(pdat$imp)])
-
-# Plot importance
-p <- ggplot(pdat, aes(var, imp)) + THEME + 
-  geom_bar(stat = "identity", fill = "cornflowerblue") +
-  labs(y = "Mean Increase in MSE after Permutation") +
-  theme(plot.margin = unit(rep(.15, 4), "in"), axis.title.y = element_blank()) + 
-  coord_flip()
-ggsave(plot = p, filename = "../figures/main/varimp.png", height = HEIGHT, 
-       width = 1.5 * WIDTH)
