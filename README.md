@@ -23,5 +23,6 @@ Files:
 - surveys
 	+ rationalization_main.txt: survey questions and flow for main study
 	+ rationalization_prerun.txt: survey questions and flow for pre run
+- paper: all files pertaining to the write up and presentation slides
 	
 The maps in 'figures/main' have been created using [CartoDB](http://cartodb.com/) and can be accessed interactively [here](http://cdb.io/1DxjEaZ).
