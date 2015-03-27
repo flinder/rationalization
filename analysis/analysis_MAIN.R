@@ -88,21 +88,21 @@ p <- ggplot(df1) +
       facet_wrap( ~ variable) + 
       scale_fill_manual(values = c("cornflowerblue", "yellowgreen", "orange", "skyblue", "grey30")) +
       THEME + theme(axis.text.x = element_text(angle = 20, hjust = 1))
-ggsave(plot = p, filename = "../figures/main/bal.png")
+#ggsave(plot = p, filename = "../figures/main/bal.png")
 
 # Time to complete survey
 p <- ggplot(dat, aes(tcompl)) + THEME + geom_density() + 
       geom_histogram(aes(y = ..density..), colour = "yellowgreen", 
                      fill = "cornflowerblue", alpha = 0.8, binwidth = 1) + 
       labs(x = "Time in Minutes", y = "Density")
-ggsave(plot = p, filename = "../figures/main/time.png", width = 1.5 * WIDTH, 
+#ggsave(plot = p, filename = "../figures/main/time.png", width = 1.5 * WIDTH, 
        height = HEIGHT)
 
 # Plot preferences
 p <- ggplot(dat, aes(x = pref, fill = group_name)) + THEME + FILL + 
       geom_bar(position = "dodge") + labs(x = "Preferred Party", y = "Count")
-ggsave(plot = p, filename = "../figures/main/preferences.png", width = 2 * WIDTH, 
-       height = HEIGHT)
+#ggsave(plot = p, filename = "../figures/main/preferences.png", width = 2 * WIDTH, 
+#       height = HEIGHT)
 
 # Exclude observations without party preference
 dat <- dat[!is.na(dat$pref), ]
@@ -132,7 +132,7 @@ pd <- partial_dependence(var = c("hltref", "gaymarry", "gayadopt", "abrtch",
                            "comm", "edu", "sex", "age"), fit = fit, df = dat1)
 
 p <- plot_pd(pd)
-ggsave(plot = p, filename = "../figures/main/partial_dependence.png")
+#ggsave(plot = p, filename = "../figures/main/partial_dependence.png")
 
 imp <- sort(fit$importance[, 1], decreasing = T)
 pdat <- data.frame(imp = imp, var = names(imp))
@@ -145,14 +145,17 @@ p <- ggplot(pdat, aes(var, imp)) + THEME +
   labs(y = "Mean Increase in MSE after Permutation") +
   theme(plot.margin = unit(rep(.15, 4), "in"), axis.title.y = element_blank()) + 
   coord_flip()
-ggsave(plot = p, filename = "../figures/main/varimp.png", height = HEIGHT, 
-       width = 1.5 * WIDTH)
+#ggsave(plot = p, filename = "../figures/main/varimp.png", height = HEIGHT, 
+#       width = 1.5 * WIDTH)
 
 
 # Put predictions into data.frame
 dat$pred[dat$group == 1] <- predict(fit)
 dat$pred[dat$group == 2] <- predict(fit, dat[dat$group == 2, ])
 
+# Check prediction bias on group 1
+mean(dat$pred[dat$group == 1] - dat$self_placement[dat$group == 1])
+mean(dat$pred[dat$group == 2] - dat$self_placement[dat$group == 2])
 # Prediction for both groups
 pdat <- data.frame(observed = dat$self_placement,
                    predicted = dat$pred,
@@ -164,8 +167,8 @@ p <- ggplot(pdat, aes(observed, predicted, color = group)) + THEME + COLOR +
         ylim(0, 100) + xlim(0, 100) + 
         stat_smooth(size = 1, se = F) + 
         labs(y = "Predicted S", x = "Observed S")
-ggsave(plot = p, filename = "../figures/main/prediction.png", width = 1.3 * WIDTH,
-       height = HEIGHT)
+#ggsave(plot = p, filename = "../figures/main/prediction.png", width = 1.3 * WIDTH,
+#       height = HEIGHT)
 
 # Look at distribution of self and party placements
 p <- ggplot(dat, aes(x = self_placement, color = group_name)) + THEME + 
@@ -174,15 +177,15 @@ p <- ggplot(dat, aes(x = self_placement, color = group_name)) + THEME +
       geom_density(alpha = .3, size = 1) + 
       facet_wrap( ~ pref) +
       labs(x = "Self Placement", y = "Density")
-ggsave(plot = p, filename = "../figures/main/dist_self.png", width = 2 * WIDTH,
-       height = 1.5 * HEIGHT)
+#ggsave(plot = p, filename = "../figures/main/dist_self.png", width = 2 * WIDTH,
+#       height = 1.5 * HEIGHT)
 
 p <- ggplot(dat, aes(x = party_placement, color = group_name)) + THEME + COLOR + 
       facet_wrap( ~ pref) + 
       geom_density(alpha = .3, size = 1) + 
       labs(x = "Party Placement", y = "Density")
-ggsave(plot = p, filename = "../figures/main/dist_party.png", width = 2 * WIDTH,
-       height = 1.5 * HEIGHT)
+#ggsave(plot = p, filename = "../figures/main/dist_party.png", width = 2 * WIDTH,
+#       height = 1.5 * HEIGHT)
 
 #===============================================================================
 # Main Analysis
@@ -218,8 +221,8 @@ p <- ggplot(df, aes(distance, color = group)) + THEME + COLOR +
       geom_density(size = 1) +
       facet_wrap( ~ experiment, scales = "free") +
       labs(x = "Distance", y = "Density")
-ggsave(plot = p, filename = "../figures/main/dist_dista_dens.png", width = 2 * WIDTH, 
-       height = HEIGHT)
+#ggsave(plot = p, filename = "../figures/main/dist_dista_dens.png", width = 2 * WIDTH, 
+#       height = HEIGHT)
 
 p <- ggplot(df, aes(x = group, y = distance, color = group)) + THEME + 
       geom_boxplot(color = "grey10", outlier.size = 0.1) + 
@@ -228,8 +231,8 @@ p <- ggplot(df, aes(x = group, y = distance, color = group)) + THEME +
       scale_color_manual(values = c("cornflowerblue", "yellowgreen"), 
                           guide = F) + 
       labs(x = "Experimental Group", y = "Distance")
-ggsave(plot = p, filename = "../figures/main/dist_dista_box.png", width = 2 * WIDTH, 
-       height = HEIGHT)
+#ggsave(plot = p, filename = "../figures/main/dist_dista_box.png", width = 2 * WIDTH, 
+#       height = HEIGHT)
 
 # Logg dists in Exp 2 
 df2 <- data.frame(distance = log(c(Z, W) + 1),
@@ -239,8 +242,8 @@ df2 <- data.frame(distance = log(c(Z, W) + 1),
 p <- ggplot(df2, aes(distance, color = group)) + THEME + COLOR + 
   geom_density(size = 1) +
   labs(x = "Distance", y = "Density")
-ggsave(plot = p, filename = "../figures/main/dist_dista_log.png", width = 1.5 * WIDTH,
-       height = HEIGHT)
+#ggsave(plot = p, filename = "../figures/main/dist_dista_log.png", width = 1.5 * WIDTH,
+#       height = HEIGHT)
 
 #===============================================================================
 # Bayesian analysis of results
@@ -261,8 +264,8 @@ parameters {
 
 model {
   // priors
-  alpha ~ gamma(0.000001, 0.000001);
-  beta ~ gamma(0.000001, 0.000001);
+  alpha ~ gamma(0.0001, 0.0001);
+  beta ~ gamma(0.0001, 0.0001);
   
   // likelihood
   for (n in 1:N){
@@ -322,46 +325,54 @@ model_t = "
 "
 
 ## Compile models
-c_mod_gamma <- stan_model(model_code = model_gamma)
-save(c_mod_gamma, file = "c_mod_gamma.RData")
-c_mod_t <- stan_model(model_code = model_t)
-save(c_mod_t, file = "c_mod_t.RData")
-#load("c_mod_gamma.RData")
-#load("c_mod_t.RData")
+#c_mod_gamma <- stan_model(model_code = model_gamma)
+#save(c_mod_gamma, file = "c_mod_gamma.RData")
+#c_mod_t <- stan_model(model_code = model_t)
+#save(c_mod_t, file = "c_mod_t.RData")
+load("c_mod_gamma.RData")
+load("c_mod_t.RData")
+
 
 # ---------------------------------------------------
-# Compare Bias in self (x and Y)
+# Compare Bias in self (x and Y) (Experiment 1)
 
 y = c(X, Y)
 groupID = c(rep(1, length(X)), rep(2,  length(Y)))
 standata_1 <- list(N = length(y), groupID = groupID, y = y)
 
 # Sample from it
-stanfit_1 <- sampling(object = c_mod_t, data = standata_1, iter = 15000, 
-                      warmup = 5000, chains = 2)
-save(stanfit_1, file = "stanfit_1.RData")
-#load("stanfit_1.RData")
+#stanfit_1 <- sampling(object = c_mod_t, data = standata_1, iter = 15000, 
+#                      warmup = 5000, chains = 2)
+#save(stanfit_1, file = "stanfit_1.RData")
+load("stanfit_1.RData")
 pex1 <- c("mu", "sigma", "nu", "mu_diff", "mu_ratio")
 post_1 <- as.data.frame(do.call(cbind, extract(stanfit_1, pars = pex1)))
 colnames(post_1) <- c("mu_1", "mu_2", "sigma_1", "sigma_2", "nu", "mu_diff", 
                       "mu_ratio")
 
+# Probability for substantively significant effect
+length(which(post_1$mu_ratio < 0.9))/nrow(post_1)
+
+
 # ---------------------------------------------------
 # Compare Bias in party
 
 y = c(Z, W)
-groupID = c(rep(1, length(X)), rep(2,  length(Y)))
+groupID = c(rep(1, length(Z)), rep(2,  length(W)))
 standata_2 <- list(N = length(y), groupID = groupID, y = y)
 
 # Sample from it
-stanfit_2 <- sampling(object = c_mod_gamma, data = standata_2, iter = 15000, 
-                      warmup = 5000, chains = 2)
-save(stanfit_2, file = "stanfit_2.RData")
-#load("stanfit_2.RData")
+#stanfit_2 <- sampling(object = c_mod_gamma, data = standata_2, iter = 15000, 
+#                      warmup = 5000, chains = 2)
+#save(stanfit_2, file = "stanfit_2.RData")
+load("stanfit_2.RData")
 pex2 <- c("alpha", "beta", "mu", "mu_diff", "mu_ratio")
 post_2 <- as.data.frame(do.call(cbind, extract(stanfit_2, pars = pex2)))
 colnames(post_2) <- c("alpha_1", "alpha_2", "beta_1", "beta_2", "mu_1", "mu_2",
                       "mu_diff", "mu_ratio")
+
+# Probability for substantively significant effect
+length(which(post_2$mu_ratio < 0.9))/nrow(post_2)
 
 # ------------------------------------------------
 # Check Model fit
@@ -435,11 +446,13 @@ res_2 <- data.frame(Mean = apply(post_2, 2, mean),
                     "Quantile_0.025" = apply(post_2, 2, quantile, 0.025),
                     "Quantile_0.975" = apply(post_2, 2, quantile, 0.975),
                     "Std.Error" = apply(post_2, 2, function(x) sqrt(var(x))))
-res <- rbind(res_1, res_2)
+rownames(res_2) <- gsub("mu_", "theta_", rownames(res_2))
 
-res_out <- xtable(res, digits = 3, caption = "Parameter estimates for Experiment 1 and 
-                  Experiment 2")
-print(res_out, type = "latex" , file = "../paper/res_table.tex" )
+res_out_1 <- xtable(res_1, digits = 3, caption = "Parameter estimates for Experiment 1")
+print(res_out_1, type = "latex" , file = "../paper/res_table_1.tex" )
+res_out_2 <- xtable(res_2, digits = 3, caption = "Parameter estimates for Experiment 2")
+print(res_out_2, type = "latex" , file = "../paper/res_table_2.tex")
+
 
 # Posterior distribution of ratio and difference in means
 pdat <- data.frame(difference = c(post_1$mu_diff, post_1$mu_ratio, post_2$mu_diff, post_2$mu_ratio),

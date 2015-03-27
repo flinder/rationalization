@@ -3,3 +3,4 @@ rationalization_manuscript.pdf: rationalization_manuscript.md
 
 rationalization_slides.pdf: rationalization_slides.md
 	pandoc -H options_slides.sty -t beamer $< -o $@
+
