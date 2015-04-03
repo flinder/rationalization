@@ -17,6 +17,8 @@ library(xtable)
 #devtools::install_github("swager/randomForest")
 #devtools::install_github("zmjones/edarf")
 library(edarf)
+library(gbm)
+library(dismo)
 
 # Load data
 dat <- read.csv("../data/main_study/main_study_clean.csv", sep = ",")
@@ -96,7 +98,7 @@ p <- ggplot(dat, aes(tcompl)) + THEME + geom_density() +
                      fill = "cornflowerblue", alpha = 0.8, binwidth = 1) + 
       labs(x = "Time in Minutes", y = "Density")
 #ggsave(plot = p, filename = "../figures/main/time.png", width = 1.5 * WIDTH, 
-       height = HEIGHT)
+#       height = HEIGHT)
 
 # Plot preferences
 p <- ggplot(dat, aes(x = pref, fill = group_name)) + THEME + FILL + 
@@ -106,6 +108,73 @@ p <- ggplot(dat, aes(x = pref, fill = group_name)) + THEME + FILL +
 
 # Exclude observations without party preference
 dat <- dat[!is.na(dat$pref), ]
+
+
+#===============================================================================
+# Standard experimental test
+#===============================================================================
+
+## Completely naive: just average positions
+
+# Experiment 1 (bias in S)
+a <- dat$self_placement[dat$group == 1] # control group
+b <- dat$self_placement[dat$group == 2]
+t.test(a, b)
+wilcox.test(a, b)
+
+# Experiment 2 (bias in P)
+c <- dat$party_placement[dat$group == 1]
+d <- dat$party_placement[dat$group == 2] # control group
+t.test(c, d)
+
+## Split by party
+
+# Experiment 1
+# Democrats
+e <- dat$self_placement[which(dat$group == 1 & dat$pref == "democrat")]
+f <- dat$self_placement[which(dat$group == 2 & dat$pref == "democrat")]
+t.test(e, f)
+
+# Republicans
+g <- dat$self_placement[which(dat$group == 1 & dat$pref == "republican")]
+h <- dat$self_placement[which(dat$group == 2 & dat$pref == "republican")]
+t.test(g, h)
+
+# Experiment 2
+# Democrats
+i <- dat$party_placement[which(dat$group == 1 & dat$pref == "democrat")]
+j <- dat$party_placement[which(dat$group == 2 & dat$pref == "democrat")]
+t.test(i, j)
+
+# Republicans
+k <- dat$party_placement[which(dat$group == 1 & dat$pref == "republican")]
+l <- dat$party_placement[which(dat$group == 2 & dat$pref == "republican")]
+t.test(i, j)
+
+## Means table
+
+# self
+self <- rbind(c(mean(e), mean(f), mean(e) - mean(f)),
+              c(mean(g), mean(h), mean(g) - mean(h)))
+self <- cbind(self, c(t.test(e, f)$p.value, t.test(g, h)$p.value))
+colnames(self) <- c("Group 1", "Group 2", "Difference", "p-value")
+rownames(self) <- c("Democrats.self", "Republicans.self")
+
+# party
+party <- rbind(c(mean(i), mean(j), mean(i) - mean(j)),
+              c(mean(k), mean(l), mean(k) - mean(l)))
+party <- cbind(self, c(t.test(i, j)$p.value, t.test(k, l)$p.value))
+colnames(party) <- c("Group 1", "Group 2", "Difference", "p-value")
+rownames(party) <- c("Democrats.party", "Republicans.party")
+
+tot <- rbind(c(mean(a), mean(b), mean(a) - mean(b), t.test(a, b)$p.value),
+             c(mean(c), mean(d), mean(c) - mean(d), t.test(c, d)$p.value))
+colnames(tot) <- colnames(self)
+rownames(tot) <- c("All.self", "All.party")
+
+m_tab <- rbind(tot, self, party)
+m_tab <- xtable(m_tab, digits = 3, caption = "Means for self and party placement in both groups for both experiments and split by preferred party")
+#print(m_tab, type = "latex" , file = "../paper/means_table.tex" )
 
 ### Train predictive model
 
@@ -120,11 +189,20 @@ for(var in vars_to_recode)
 mod <- self_placement ~ hltref + gaymarry + gayadopt + abrtch + abrthlth + abrtinc + 
   abrtbd + abrtrpe + abrtdth + abrtfin + fedenv + fedwlf + fedpoor + fedschool + 
   drill + gwhap + gwhow + aauni + aawork + gun + comm + edu + sex + age
-fit <- randomForest(mod, data = dat[dat$group == 1, ],  importance = T, keep.inbag = TRUE, mtry = 4)
+fit <- randomForest(mod, data = dat[dat$group == 1, ],  importance = T, keep.inbag = TRUE, mtry = 7, ntree = 1000)
 fit
-# EDA for random forest
-dat1 = dat[dat$group == 1, ]
 
+### Test other algos
+
+## Boosted trees
+brt <- gbm(mod, distribution = "gaussian", data = dat[dat$group == 1, ],
+           n.trees = 10000)
+perf <- gbm.perf(brt, method = "OOB")
+brt <- gbm(mod, distribution = "gaussian", data = dat[dat$group == 1, ],
+           n.trees = perf)
+mean(brt$train.error)
+
+# EDA for random forest
 pd <- partial_dependence(var = c("hltref", "gaymarry", "gayadopt", "abrtch",
                            "abrthlth", "abrtinc", "abrtbd", "abrtrpe", "abrtdth",
                            "abrtfin", "fedenv", "fedwlf", "fedpoor", "fedschool",
@@ -163,12 +241,12 @@ pdat <- data.frame(observed = dat$self_placement,
                    group = dat$group_name
                    )
 p <- ggplot(pdat, aes(observed, predicted, color = group)) + THEME + COLOR + 
-        geom_point() + geom_abline(intercept = 0, slope = 1) + 
+        geom_point() +# geom_abline(intercept = 0, slope = 1) + 
         ylim(0, 100) + xlim(0, 100) + 
-        stat_smooth(size = 1, se = F) + 
+        stat_smooth(size = 1, se = FALSE) + 
         labs(y = "Predicted S", x = "Observed S")
-#ggsave(plot = p, filename = "../figures/main/prediction.png", width = 1.3 * WIDTH,
-#       height = HEIGHT)
+#ggsave(plot = p, filename = "../figures/main/prediction.png", width = 2.3 * WIDTH,
+       height = 2 * HEIGHT)
 
 # Look at distribution of self and party placements
 p <- ggplot(dat, aes(x = self_placement, color = group_name)) + THEME + 
@@ -206,7 +284,6 @@ Y <- dat$signed_s_dist[dat$group == 2]
 
 # Bias in party
 Z <- (dat$self_placement[dat$group == 1] - dat$party_placement[dat$group == 1])^2
-Z1 <- (dat$pred[dat$group == 1] - dat$party_placement[dat$group == 1])^2
 W <- (dat$pred[dat$group == 2] - dat$party_placement[dat$group == 2])^2
 
 # Visualize distribution of differences
@@ -244,6 +321,49 @@ p <- ggplot(df2, aes(distance, color = group)) + THEME + COLOR +
   labs(x = "Distance", y = "Density")
 #ggsave(plot = p, filename = "../figures/main/dist_dista_log.png", width = 1.5 * WIDTH,
 #       height = HEIGHT)
+
+# K-S tests
+lZ <- log(Z + 1)
+lW <- log(W + 1)
+
+ksX <- ks.test(X, "pnorm")
+ksY <- ks.test(Y, "pnorm")
+ksZ <- ks.test(lZ, "pnorm")
+ksW <- ks.test(lW, "pnorm")
+
+ks_tab <- rbind(c(ksX$statistic, ksX$p.value),
+                c(ksY$statistic, ksY$p.value),
+                c(ksZ$statistic, ksZ$p.value),
+                c(ksW$statistic, ksW$p.value))
+colnames(ks_tab) <- c("Statistic", "p-value")
+rownames(ks_tab) <- c("X", "Y", "log(Z + 1)", "log(W + 1)")
+ks_tab <- xtable(ks_tab, digits = 3, caption = "Kolmogorov-Smirnoff test for normality
+                 for the outcomes of Experiment 1 and the log-transformed outcomes of
+                 Experiment 2. In all cases the Null-Hypothesis of a normal distribution
+                 is rejected")
+#print(ks_tab, type = "latex" , file = "../paper/ks_tests.tex" )
+#===============================================================================
+# Frequentist Tests
+#===============================================================================
+
+# Wilcoxon test
+wc1 <- wilcox.test(X, Y, alternative = "less")
+wc2 <- wilcox.test(Z, W, alternative = "less")
+
+wc <- cbind(c(wc1$statistic, wc1$p.value),
+            c(wc2$statistic, wc2$p.value))
+colnames(wc) <- c("Experiment 1", "Experiment 2")
+rownames(wc) <- c("Statistic", "p-value")
+wc <- xtable(wc, digits = 3, caption = "Wilcoxon rank tests for Experiments 1
+             and 2. P-values for one sided tests.")
+#print(wc, type = "latex" , file = "../paper/np_res_table.tex" )
+
+# T-test for experiment 1
+ttest <- t.test(X, Y, alternative = "less")
+tt <- cbind(mean(X), mean(Y), mean(X) - mean(Y), ttest$p.value)
+colnames(tt) <- c("Group 1 (control)", "Group 2", "Difference in Means", "p-value")
+tt <- xtable(tt, digits = 3, caption = "One sided T-test for Experiment 1")
+#print(tt, type = "latex" , file = "../paper/t_res_table.tex" )
 
 #===============================================================================
 # Bayesian analysis of results
