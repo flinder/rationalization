@@ -163,7 +163,7 @@ rownames(self) <- c("Democrats.self", "Republicans.self")
 # party
 party <- rbind(c(mean(i), mean(j), mean(i) - mean(j)),
               c(mean(k), mean(l), mean(k) - mean(l)))
-party <- cbind(self, c(t.test(i, j)$p.value, t.test(k, l)$p.value))
+party <- cbind(party, c(t.test(i, j)$p.value, t.test(k, l)$p.value))
 colnames(party) <- c("Group 1", "Group 2", "Difference", "p-value")
 rownames(party) <- c("Democrats.party", "Republicans.party")
 
@@ -203,13 +203,13 @@ brt <- gbm(mod, distribution = "gaussian", data = dat[dat$group == 1, ],
 mean(brt$train.error)
 
 # EDA for random forest
-pd <- partial_dependence(var = c("hltref", "gaymarry", "gayadopt", "abrtch",
-                           "abrthlth", "abrtinc", "abrtbd", "abrtrpe", "abrtdth",
-                           "abrtfin", "fedenv", "fedwlf", "fedpoor", "fedschool",
-                           "drill", "gwhap", "gwhow", "aauni", "aawork", "gun",
-                           "comm", "edu", "sex", "age"), fit = fit, df = dat1)
+## pd <- partial_dependence(var = c("hltref", "gaymarry", "gayadopt", "abrtch",
+##                            "abrthlth", "abrtinc", "abrtbd", "abrtrpe", "abrtdth",
+##                            "abrtfin", "fedenv", "fedwlf", "fedpoor", "fedschool",
+##                            "drill", "gwhap", "gwhow", "aauni", "aawork", "gun",
+##                            "comm", "edu", "sex", "age"), fit = fit, df = dat)
 
-p <- plot_pd(pd)
+## p <- plot_pd(pd)
 #ggsave(plot = p, filename = "../figures/main/partial_dependence.png")
 
 imp <- sort(fit$importance[, 1], decreasing = T)
@@ -246,7 +246,7 @@ p <- ggplot(pdat, aes(observed, predicted, color = group)) + THEME + COLOR +
         stat_smooth(size = 1, se = FALSE) + 
         labs(y = "Predicted S", x = "Observed S")
 #ggsave(plot = p, filename = "../figures/main/prediction.png", width = 2.3 * WIDTH,
-       height = 2 * HEIGHT)
+#       height = 2 * HEIGHT)
 
 # Look at distribution of self and party placements
 p <- ggplot(dat, aes(x = self_placement, color = group_name)) + THEME + 
@@ -461,12 +461,12 @@ groupID = c(rep(1, length(X)), rep(2,  length(Y)))
 standata_1 <- list(N = length(y), groupID = groupID, y = y)
 
 # Sample from it
-#stanfit_1 <- sampling(object = c_mod_t, data = standata_1, iter = 15000, 
-#                      warmup = 5000, chains = 2)
-#save(stanfit_1, file = "stanfit_1.RData")
-load("stanfit_1.RData")
+stanfit_1 <- sampling(object = c_mod_t, data = standata_1, iter = 30000, 
+                      warmup = 5000, chains = 1)
+save(stanfit_1, file = "stanfit_1.RData")
+#load("stanfit_1.RData")
 pex1 <- c("mu", "sigma", "nu", "mu_diff", "mu_ratio")
-post_1 <- as.data.frame(do.call(cbind, extract(stanfit_1, pars = pex1)))
+post_1 <- as.data.frame(do.call(cbind, rstan::extract(stanfit_1, pars = pex1)))
 colnames(post_1) <- c("mu_1", "mu_2", "sigma_1", "sigma_2", "nu", "mu_diff", 
                       "mu_ratio")
 
@@ -487,7 +487,7 @@ standata_2 <- list(N = length(y), groupID = groupID, y = y)
 #save(stanfit_2, file = "stanfit_2.RData")
 load("stanfit_2.RData")
 pex2 <- c("alpha", "beta", "mu", "mu_diff", "mu_ratio")
-post_2 <- as.data.frame(do.call(cbind, extract(stanfit_2, pars = pex2)))
+post_2 <- as.data.frame(do.call(cbind, rstan::extract(stanfit_2, pars = pex2)))
 colnames(post_2) <- c("alpha_1", "alpha_2", "beta_1", "beta_2", "mu_1", "mu_2",
                       "mu_diff", "mu_ratio")
 
@@ -498,9 +498,9 @@ length(which(post_2$mu_ratio < 0.9))/nrow(post_2)
 # Check Model fit
 
 B <- 100 # number of replications
-y_rep_full_1 <- extract(stanfit_1, "y_rep")$y_rep
+y_rep_full_1 <- rstan::extract(stanfit_1, "y_rep")$y_rep
 y_rep_1 <- y_rep_full_1[sample(c(1:nrow(y_rep_full_1)), B), ]
-y_rep_full_2 <- extract(stanfit_2, "y_rep")$y_rep
+y_rep_full_2 <- rstan::extract(stanfit_2, "y_rep")$y_rep
 y_rep_2 <- y_rep_full_2[sample(c(1:nrow(y_rep_full_2)), B), ]
 
 # Prepare replications from experiment 1
@@ -520,7 +520,6 @@ gdat_2$groupID <- factor(rep(groupID_name, e = B))
 
 gdat <- rbind(gdat_1, gdat_2)
 gdat$type <- "replication"
-
 
 observed <- data.frame(iteration = 0,
                        observation = NA,
@@ -548,8 +547,8 @@ p <- ggplot(pdat, aes(x = value, alpha = iteration, color = type, size = type)) 
                            name = "") +
         scale_size_manual(values = c(1, rep(0.5, B)), name = "") +
         facet_wrap( ~ experiment + groupID, scales = "free")
-ggsave(plot = p, filename = "../figures/main/post_pred.png", width = 2.5 * WIDTH, 
-       height = 1.5 * HEIGHT)
+## ggsave(plot = p, filename = "../figures/main/post_pred.png", width = 2.5 * WIDTH, 
+##        height = 1.5 * HEIGHT)
 
 # ------------------------------------------------
 # Visualize results
@@ -569,9 +568,9 @@ res_2 <- data.frame(Mean = apply(post_2, 2, mean),
 rownames(res_2) <- gsub("mu_", "theta_", rownames(res_2))
 
 res_out_1 <- xtable(res_1, digits = 3, caption = "Parameter estimates for Experiment 1")
-print(res_out_1, type = "latex" , file = "../paper/res_table_1.tex" )
+#print(res_out_1, type = "latex" , file = "../paper/res_table_1.tex" )
 res_out_2 <- xtable(res_2, digits = 3, caption = "Parameter estimates for Experiment 2")
-print(res_out_2, type = "latex" , file = "../paper/res_table_2.tex")
+#print(res_out_2, type = "latex" , file = "../paper/res_table_2.tex")
 
 
 # Posterior distribution of ratio and difference in means
@@ -615,8 +614,22 @@ p <- ggplot(pdat, aes(x = difference, fill = above)) + THEME +
       geom_vline(aes(xintercept=vline), data = pdat) +
       labs(x = "Mean Difference/Ratio", y = "") + 
       geom_text(data = pdat_text, aes(x = x, y = y, label = lab), size = 7, color = "white")
-ggsave(plot = p, filename = "../figures/main/mean_diff_ratio.png", width = 2.5 * WIDTH, 
-       height = 1.5 * HEIGHT)
+## ggsave(plot = p, filename = "../figures/main/mean_diff_ratio.png", width = 2.5 * WIDTH, 
+##        height = 1.5 * HEIGHT)
+
+## Plot only for difference in means
+p <- ggplot(pdat[pdat$type == "Difference", ], aes(x = difference, fill = above)) +
+      THEME + 
+      facet_wrap( ~ experiment, scales = "free") + 
+      geom_histogram(color = "yellowgreen") + 
+      theme(legend.key.height=unit(2,"line")) + 
+      scale_fill_manual(values = c("red", "cornflowerblue"), name = "") +
+      geom_vline(aes(xintercept = vline), data = pdat[pdat$type == "Difference", ]) +
+      labs(x = "Mean Difference/Ratio", y = "") + 
+      geom_text(data = pdat_text[pdat_text$type == "Difference", ],
+                aes(x = x, y = y, label = lab), size = 7, color = "white")
+ggsave(plot = p, filename = "../figures/main/mean_diff.png", width =  2.5 * WIDTH, 
+       height = HEIGHT)
 
 # -------------------------------------------
 # Trace plots
