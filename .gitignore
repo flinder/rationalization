@@ -2,6 +2,7 @@
 *.Rhistory
 *.RData
 *.pdf
+.DS_Store
 data/
 paper/
 auto/
