@@ -1,0 +1,81 @@
+\section{Appendix}
+
+\subsection{Sample Description}
+
+\input{tables/means_table.tex}
+
+\begin{figure}[ht!]
+  \centering
+  \includegraphics{figures/main/time.png}
+  \caption{Distribution of time in minutes respondents needed to complete the survey.}
+  \label{fig:time}
+\end{figure}
+
+\begin{figure}[ht!]
+  \centering
+  \includegraphics{figures/main/us_map.png}
+  \caption{Geographical distribution of respondents (respondents with ip addresses outside the US removed).}
+  \label{fig:map}
+\end{figure}
+
+\begin{figure}[ht!]
+  \centering
+  \includegraphics{figures/main/bal.png}
+  \caption{Balance of answers to issue questions in the survey group. Full variable names can be found in Table \ref{tab:predictors}}
+  \label{fig:bal}
+\end{figure}
+
+\begin{figure}[ht!]
+  \centering
+  \includegraphics{figures/main/dist_dista_log.png}
+  \caption{Distribution of logarithmic transformation of distances for Experiment 2. The following transformations have been applied: $Z_t = ln(Z + 1)$ (Blue line) and $W_t = ln(W + 1)$ (Green line).}
+  \label{fig:d_dist_log}
+\end{figure}
+
+\input{tables/ks_tests.tex}
+
+\clearpage
+
+\subsection{Predictive Model}
+
+\begin{figure}[ht!]
+  \centering
+  \includegraphics{figures/main/varimp.png}
+  \caption{Permutation importance of predictors in random forest model. Meanings of the variable abbreviatiosn can be found in Table \ref{tab:predictors}.}
+  \label{fig:imp}
+\end{figure}
+
+\begin{figure}[ht!]
+  \centering
+  \includegraphics{figures/main/partial_dependence.png}
+  \caption{Partial dependence for predictor variables. Variable abbreviations and codings can be found in Table \ref{tab:predictors}.}
+  \label{fig:pd}
+\end{figure}
+
+\input{tables/predictor_table.tex}
+
+\clearpage
+
+\subsection{Frequentist Test}
+
+\input{tables/np_res_table.tex}
+
+\input{tables/t_res_table.tex}
+
+\clearpage
+
+\subsection{MCMC Diagnostics}
+
+\begin{figure}[ht!]
+  \centering
+  \includegraphics{figures/main/trace_1.png}
+  \caption{Traceplots for parameters in Experiment 1.}
+  \label{fig:trace_1}
+\end{figure}
+
+\begin{figure}[ht!]
+  \centering
+  \includegraphics{figures/main/trace_2.png}
+  \caption{Traceplots for parameters in Experiment 2.}
+  \label{fig:trace_2}
+\end{figure}

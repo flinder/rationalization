@@ -1,0 +1,10 @@
+\usepackage{tikz}
+\usepackage{amsmath}
+\usetikzlibrary{backgrounds}
+\usetikzlibrary{arrows,calc}
+
+\newlength{\wideitemsep}
+\setlength{\wideitemsep}{\itemsep}
+\addtolength{\wideitemsep}{2pt}
+\let\olditem\item
+\renewcommand{\item}{\setlength{\itemsep}{\wideitemsep}\olditem}

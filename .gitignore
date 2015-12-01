@@ -1,8 +1,7 @@
 *.Rproj.user
 *.Rhistory
 *.RData
-*.pdf
 .DS_Store
 data/
-paper/
+paper/pb_submission/
 auto/

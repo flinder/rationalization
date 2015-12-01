@@ -1,0 +1,32 @@
+\begin{figure}[ht!]
+  \centering
+  \begin{tikzpicture}[scale = 0.8]
+
+    % Axis
+    \coordinate (y2) at (0,9);
+    \coordinate (x2) at (8,0);
+    \draw[axis] (y2) node[above] {Dimension 2} -- (0,0) --  (x2) node[right] {Dimension 1};
+
+    \draw[fill = black] (5,1) circle (0.1);
+    \node [above] at (5,1) {$P_2$};
+    \draw[fill =black] (1,7) circle (0.1);
+    \node [above] at (1,7) {$S$};
+    \draw[fill =black] (6,8) circle (0.1);
+    \node [above] at (6,8) {$P_1$};
+    \draw[->] (1,7) -- (5,1);
+    \draw[->] (1,7) -- (6,8);
+    \draw[fill =black] (10,10) circle (0.00001);
+
+    \draw[dashed] (1,7) -- (1,0) node[below]{$S$};
+    \draw[dashed] (5,1) -- (5,0) node[below]{$P_2$};
+    \draw[dashed] (6,8) -- (6,0) node[below]{$P_1$};
+
+    \draw[dashed] (1,7) -- (0,7) node[left]{$S$};
+    \draw[dashed] (6,8) -- (0,8) node[left]{$P_1$};
+    \draw[dashed] (5,1) -- (0,1) node[left]{$P_2$};
+    % \draw[help lines] (0,0) grid (10,10);
+
+  \end{tikzpicture}
+  \caption{Illustration of difference between multidimensional optimum and unidimensional optimum. The subject $S$ decides between two parties $P_1$ and $P_2$. $P_1$ minimizes the ecludian distance in the two dimensional space. However, $P_2$ is closer to $S$ in the Dimension 1. }
+  \label{fig:theo}
+\end{figure}
